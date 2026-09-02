@@ -38,15 +38,14 @@ app.use( (req ,res,next) => {
       next();
 })
 
-app.use(rateLimiter);
 
-app.use('/api' , require("./routing/login") ) ;
+app.use('/' , rateLimiter , require("./routing/login") ) ;
 
-app.use('/api/regist' , require("./routing/regist") ) ;
+app.use('/api/regist' , rateLimiter,require("./routing/regist") ) ;
 
-app.use( '/api/refresh' , require("./routing/refresh"))
+app.use( '/api/refresh' , rateLimiter, require("./routing/refresh"))
 
-app.use( '/api/logout' , require("./routing/logout"));
+app.use( '/api/logout' , rateLimiter, require("./routing/logout"));
 
 //time for verfieJWT =-= !(refresh and verfie u will burnout ah coding life =*=)
 app.use(verfieJWT);
