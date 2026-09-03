@@ -1,5 +1,5 @@
 const mongoose = require("mongoose") ;
-const Users = require("../Data/users") ;
+const Users = require("../models/users") ;
 
 const logoutHandler = async ( req , res ) => {
       try {

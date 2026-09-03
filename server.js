@@ -50,7 +50,7 @@ app.use( '/api/logout' , rateLimiter, require("./routing/logout"));
 //time for verfieJWT =-= !(refresh and verfie u will burnout ah coding life =*=)
 app.use(verfieJWT);
 
-
+app.use('/api/v1/category' , require("./routing/category")) ;
 
 mongoose.connection.once("open" , () => {
 
