@@ -1,7 +1,7 @@
 const Category = require('../models/category') ;
 const Product = require('../models/products') ;
 
-// @desc Get All Products (Public + Dynamic Search, Filter, Sort, Paginate)
+// @desc Get All Products (Public + Dynamic Search, Filter, Sort, Paginate) 'for all'
 // @route GET /api/v1/products
 const getProducts = async (req, res) => {
     try {
