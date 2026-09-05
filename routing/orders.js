@@ -3,7 +3,7 @@ const router = express.Router() ;
 const getOrders = require("../Controllers/getOrders") ;
 const createGuestOrder = require("../Controllers/createGuestOrder") ;
 const updateOrderStatus = require("../Controllers/updateOrderStatus") ;
-const {verifyRoles , ROLES } = require("../middlaware/verifyRoles") ;
+const {verifyRoles , ROLES } = require("../middleware/verifyRoles") ;
 const verfieJWT = require("../Controllers/verfieJWT") ;
 
 // well only admin is the allowed to access that !

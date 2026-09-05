@@ -1,5 +1,5 @@
 const Category = require('../models/category') ;
-const Product = require('../models/products') ;
+const Product = require('../models/product') ;
 
 // @desc Get All Products (Public + Dynamic Search, Filter, Sort, Paginate) 'for all'
 // @route GET /api/v1/products

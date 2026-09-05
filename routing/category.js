@@ -1,7 +1,7 @@
 const express = require("express") ;
 const router = express.Router() ;
 const { createCategory , getAllCategories } = require("../Controllers/categoryController") ;
-const {verifyRoles , ROLES } = require("../middlaware/verifyRoles") ;
+const {verifyRoles , ROLES } = require("../middleware/verifyRoles") ;
 const deleteCategory = require("../Controllers/deleteCategoryController") ;
 const updateCategory = require("../Controllers/updatingCategory") ;
 const verfieJWT = require("../Controllers/verfieJWT") ;

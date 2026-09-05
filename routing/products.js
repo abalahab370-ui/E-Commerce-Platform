@@ -4,9 +4,9 @@ const getProducts = require("../Controllers/getProduct") ;
 const createProduct = require("../Controllers/createProduct");
 const updateProduct = require("../Controllers/updatingProductController")
 const deleteProduct = require("../Controllers/deleteProductController") ;
-const {verifyRoles , ROLES } = require("../middlaware/verifyRoles") ;
+const {verifyRoles , ROLES } = require("../middleware/verifyRoles") ;
 const verfieJWT = require("../Controllers/verfieJWT") ;
-const multer = require("multer");
+const multer = require("../middleware/multer");
 
 // well all are allowed to get products : 
 

@@ -1,5 +1,5 @@
-const Product = require('../models/Product');
-const Category = require('../models/Category');
+const Product = require('../models/product');
+const Category = require('../models/category');
 const cloudinary = require('../config/cloudinary');
 
 // @desc Create Product (Admin Only)

@@ -14,9 +14,7 @@ const corsOptions = require("./config/corsOptions") ;
 const cookieParser = require("cookie-parser") ;
 const mongoose  = require("mongoose") ;
 const connectDB = require("./config/dbconnect") ;
-const verfieJWT = require("./Controllers/verfieJWT") ; 
 const rateLimiter = require("./Controllers/rateLimiter.Js")
-
 //Connecting to The DataBase : 
 connectDB() ;
 
@@ -38,20 +36,20 @@ app.use( (req ,res,next) => {
       next();
 })
 
-app.use('/api/v1/products' , require("")) ;
+app.use('/api/v1/products' , rateLimiter , require("./routing/products")) ;
 
-app.use('/api/v1/categories' , require("")) ;
+app.use('/api/v1/categories' , rateLimiter, require("./routing/category")) ;
 
-app.use('/api/v1/orders' , require("")) ;
+app.use('/api/v1/orders' , rateLimiter , require("./routing/orders")) ;
 
 
-app.use('/api/v1/admin/login' , rateLimiter , require("./routing/login") ) ;
+app.use('/api/v1/auth/login' , rateLimiter , require("./routing/login") ) ;
 
 //app.use('/api/v1/regist' , rateLimiter,require("./routing/regist") ) ;
 
-app.use( '/api/v1/admin/refresh' , rateLimiter, require("./routing/refresh"))
+app.use( '/api/v1/auth/refresh' , rateLimiter, require("./routing/refresh"))
 
-app.use( '/api/v1/admin/logout' , rateLimiter, require("./routing/logout"));
+app.use( '/api/v1/auth/logout' , rateLimiter, require("./routing/logout"));
 
 //time for verfieJWT =-= !(refresh and verfie  , u will burnout ah coding life =*=)
 

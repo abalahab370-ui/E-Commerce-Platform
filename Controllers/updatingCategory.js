@@ -1,6 +1,6 @@
 const mongoose = require("mongoose") ;
 const Category = require("../models/category") ;
-const Product = require("../models/products") ;
+const Product = require("../models/product") ;
 
 const updateCategory = async (req, res) => {
   try {
