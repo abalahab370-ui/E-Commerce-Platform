@@ -47,6 +47,7 @@ const orderSchema = new Schema({
             required: [true, 'Baladiya is required'] 
         },
         deliveryType: { 
+
             type: String, 
             enum: ['home', 'desk'], 
             default: 'home' 
