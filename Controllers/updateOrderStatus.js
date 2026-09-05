@@ -40,4 +40,4 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
-module.exports = { createGuestOrder, updateOrderStatus };
+module.exports =  updateOrderStatus;
