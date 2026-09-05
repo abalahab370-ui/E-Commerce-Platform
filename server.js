@@ -38,19 +38,24 @@ app.use( (req ,res,next) => {
       next();
 })
 
+app.use('/api/v1/products' , require("")) ;
 
-app.use('/' , rateLimiter , require("./routing/login") ) ;
+app.use('/api/v1/categories' , require("")) ;
 
-app.use('/api/regist' , rateLimiter,require("./routing/regist") ) ;
+app.use('/api/v1/orders' , require("")) ;
 
-app.use( '/api/refresh' , rateLimiter, require("./routing/refresh"))
 
-app.use( '/api/logout' , rateLimiter, require("./routing/logout"));
+app.use('/api/v1/admin/login' , rateLimiter , require("./routing/login") ) ;
 
-//time for verfieJWT =-= !(refresh and verfie u will burnout ah coding life =*=)
-app.use(verfieJWT);
+//app.use('/api/v1/regist' , rateLimiter,require("./routing/regist") ) ;
 
-app.use('/api/v1/category' , require("./routing/category")) ;
+app.use( '/api/v1/admin/refresh' , rateLimiter, require("./routing/refresh"))
+
+app.use( '/api/v1/admin/logout' , rateLimiter, require("./routing/logout"));
+
+//time for verfieJWT =-= !(refresh and verfie  , u will burnout ah coding life =*=)
+
+
 
 mongoose.connection.once("open" , () => {
 
