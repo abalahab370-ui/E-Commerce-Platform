@@ -1,5 +1,5 @@
-const Product = require('../models/Product');
-const Category = require('../models/Category');
+const Product = require('../models/product');
+const Category = require('../models/category');
 const cloudinary = require('../config/cloudinary.js');
 
 // @desc    Update Product Details & Manage Images (Admin Only)
