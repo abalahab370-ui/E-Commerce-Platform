@@ -1,9 +1,3 @@
-//well this project is about image processing have fun wasting your time in reviewing my shi code !
-//first this project gonna be like a blogger project that we did but u will post images and get images , not text ! 
-//this means we have to build the login , regist system with jwt as always !
-//hmmm should i build it again or just copy it from past projects ?
-//ithink i will just copy it from my past project i dont wanna start coding every think from scratch cuz its not the goal of this project !
-
 require("dotenv").config() ;
 const express = require("express") ;
 const app = express() ;
