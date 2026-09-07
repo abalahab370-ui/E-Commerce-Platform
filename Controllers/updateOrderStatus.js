@@ -1,8 +1,8 @@
-const Order = require("../models/order") ;
+const Order = require("../models/order");
+const Product = require("../models/product"); // <-- Added missing Product import
 
-// @desc    Update Order Status & Restock on Cancellation (Admin Only)
+// @desc    Update Order Status & Restock on Cancellation/Retour (Admin Only)
 // @route   PATCH /api/v1/orders/:id/status
-// PATCH /api/v1/orders/:id/status
 const updateOrderStatus = async (req, res) => {
   try {
     const { status, adminNotes } = req.body;
@@ -20,20 +20,22 @@ const updateOrderStatus = async (req, res) => {
     const wasInactive = inactiveStatuses.includes(previousStatus);
     const isNowInactive = inactiveStatuses.includes(status);
 
-    // 1. RESTORE STOCK: Moving from Shipped/Confirmed/Livré -> Cancelled or Retour
+    // 1. RESTORE STOCK: Moving from Active (Pending/Confirmed/Delivered) -> Cancelled or Retour
     if (!wasInactive && isNowInactive) {
       const restorePromises = order.items.map((item) => {
-        return Product.findByIdAndUpdate(item.product, {
-          $inc: { stock: item.quantity } // Put stock back into available inventory
+        const productId = item.product?._id || item.product || item.productId;
+        return Product.findByIdAndUpdate(productId, {
+          $inc: { stock: item.quantity }
         });
       });
       await Promise.all(restorePromises);
     }
 
-    // 2. RE-DEDUCT STOCK: Re-shipping an order previously marked as Cancelled or Retour
+    // 2. RE-DEDUCT STOCK: Moving from Cancelled or Retour -> Active status
     if (wasInactive && !isNowInactive) {
       for (const item of order.items) {
-        const product = await Product.findById(item.product);
+        const productId = item.product?._id || item.product || item.productId;
+        const product = await Product.findById(productId);
         if (product) {
           product.stock = Math.max(0, product.stock - item.quantity);
           await product.save();
@@ -41,7 +43,7 @@ const updateOrderStatus = async (req, res) => {
       }
     }
 
-    // Update fields
+    // Update order fields
     order.status = status;
     if (adminNotes !== undefined) order.adminNotes = adminNotes;
 
@@ -54,4 +56,4 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports =  updateOrderStatus;
+module.exports = updateOrderStatus;

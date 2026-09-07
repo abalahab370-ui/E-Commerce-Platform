@@ -16,7 +16,7 @@ export default function ProductManagement() {
         price: '',
         stock: '',
         category: '',
-        images: [] // 👈 Changed to array for multi-file support
+        images: []
     });
 
     const loadData = useCallback(async () => {
@@ -42,12 +42,19 @@ export default function ProductManagement() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        
+        // Prevent setting negative numeric state directly
+        if ((name === 'price' || name === 'stock') && value !== '') {
+            const numValue = Math.max(0, Number(value));
+            setFormData(prev => ({ ...prev, [name]: numValue }));
+            return;
+        }
+
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleFileChange = (e) => {
         if (e.target.files) {
-            // 👈 Store all selected files in an array
             setFormData(prev => ({ ...prev, images: Array.from(e.target.files) }));
         }
     };
@@ -69,8 +76,8 @@ export default function ProductManagement() {
         setFormData({
             name: product.name || '',
             description: product.description || '',
-            price: product.price || '',
-            stock: product.stock || '',
+            price: product.price ?? '',
+            stock: product.stock ?? '',
             category: product.category?._id || product.category || '',
             images: []
         });
@@ -78,8 +85,15 @@ export default function ProductManagement() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitting(true);
         setError('');
+
+        // Guard against negative inputs
+        if (Number(formData.price) < 0 || Number(formData.stock) < 0) {
+            setError('Le prix et le stock doivent être supérieurs ou égaux à 0.');
+            return;
+        }
+
+        setSubmitting(true);
 
         try {
             const payload = new FormData();
@@ -87,11 +101,8 @@ export default function ProductManagement() {
             payload.append('description', formData.description);
             payload.append('price', formData.price);
             payload.append('stock', formData.stock);
-            
-            // 👈 1. Key must be 'categoryId' to match req.body.categoryId
             payload.append('categoryId', formData.category);
             
-            // 👈 2. Append each file under 'images' key for multer.array('images')
             if (formData.images.length > 0) {
                 formData.images.forEach(file => {
                     payload.append('images', file);
@@ -183,6 +194,8 @@ export default function ProductManagement() {
                                 <input 
                                     type="number"
                                     name="price"
+                                    min="0"
+                                    step="any"
                                     value={formData.price}
                                     onChange={handleInputChange}
                                     required
@@ -194,6 +207,8 @@ export default function ProductManagement() {
                                 <input 
                                     type="number"
                                     name="stock"
+                                    min="0"
+                                    step="1"
                                     value={formData.stock}
                                     onChange={handleInputChange}
                                     required
@@ -215,7 +230,6 @@ export default function ProductManagement() {
 
                         <div>
                             <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>Images (Max 5)</label>
-                            {/* 👈 Added 'multiple' attribute */}
                             <input 
                                 type="file"
                                 accept="image/*"
@@ -272,7 +286,6 @@ export default function ProductManagement() {
                                     {products.map((item) => (
                                         <tr key={item._id} style={{ borderBottom: '1px solid #F1F5F9' }}>
                                             <td style={{ padding: '10px' }}>
-                                                {/* 👈 Corrected rendering to inspect the first Cloudinary image URL */}
                                                 {item.images && item.images.length > 0 ? (
                                                     <img src={item.images[0].url} alt={item.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
                                                 ) : (

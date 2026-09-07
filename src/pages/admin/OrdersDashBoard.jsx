@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { api } from '../../services/api';
 
 const STATUSES = [
-    { key: 'Pending_Confirmation', label: 'En Attente', color: '#EAB308' },
-    { key: 'Confirmed', label: 'Confirmée', color: '#3B82F6' },
-    { key: 'In Transit', label: 'En Transit', color: '#8B5CF6' }, // Fixed enum value
-    { key: 'Delivered', label: 'Livrée', color: '#10B981' },
-    { key: 'Cancelled', label: 'Annulée', color: '#EF4444' }
+    { key: 'Pending_Confirmation', label: 'En Attente' },
+    { key: 'Confirmed', label: 'Confirmée' },
+    { key: 'Shipped', label: 'Expédiée' },
+    { key: 'Completed', label: 'Livrée & Payée' },
+    { key: 'Retour', label: 'Retour' },
+    { key: 'Cancelled', label: 'Annulée' }
 ];
 
 export default function OrdersDashboard() {
@@ -53,7 +54,7 @@ export default function OrdersDashboard() {
                         Centre d'Appels COD
                     </h1>
                     <p style={{ fontSize: '13px', color: '#64748B', margin: '4px 0 0 0' }}>
-                        Gestion des confirmations et de l'expédition
+                        Gestion des confirmations, d'expédition et des ventes
                     </p>
                 </div>
                 <button 
@@ -65,7 +66,7 @@ export default function OrdersDashboard() {
                 </button>
             </div>
 
-            {/* Status Tabs */}
+            {/* Status Navigation Tabs */}
             <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #E2E8F0', paddingBottom: '12px', marginBottom: '24px', overflowX: 'auto' }}>
                 {STATUSES.map((status) => {
                     const isActive = activeStatus === status.key;
@@ -98,7 +99,7 @@ export default function OrdersDashboard() {
                 </div>
             )}
 
-            {/* Loading Skeleton */}
+            {/* Orders Feed */}
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '40px', color: '#64748B', fontSize: '14px' }}>
                     Chargement des commandes en cours...
@@ -108,7 +109,6 @@ export default function OrdersDashboard() {
                     Aucune commande dans cette catégorie.
                 </div>
             ) : (
-                /* Orders Feed */
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {orders.map((order) => {
                         const customerName = order.shippingDetails?.fullName || order.customerName || 'Client Inconnu';
@@ -173,49 +173,61 @@ export default function OrdersDashboard() {
                                     </div>
                                 </div>
 
-                                {/* Status Change Controls */}
+                                {/* Status Transition Actions */}
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#F8FAFC', padding: '12px', borderRadius: '6px' }}>
                                     <span style={{ fontSize: '12px', fontWeight: '600', color: '#475569' }}>
                                         Changer le statut:
                                     </span>
                                     <div style={{ display: 'flex', gap: '8px' }}>
+                                        {/* Step 1: En Attente -> Confirmer ou Annuler */}
                                         {activeStatus === 'Pending_Confirmation' && (
                                             <>
                                                 <button
                                                     disabled={updatingId === order._id}
                                                     onClick={() => handleStatusChange(order._id, 'Confirmed')}
-                                                    style={{ padding: '6px 12px', backgroundColor: '#10B981', color: '#FFF', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                    style={{ padding: '6px 12px', backgroundColor: '#3B82F6', color: '#FFF', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
                                                 >
                                                     ✓ Confirmer
                                                 </button>
                                                 <button
                                                     disabled={updatingId === order._id}
                                                     onClick={() => handleStatusChange(order._id, 'Cancelled')}
-                                                    style={{ padding: '6px 12px', backgroundColor: '#EF4444', color: '#FFF', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                    style={{ padding: '6px 12px', backgroundColor: '#64748B', color: '#FFF', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
                                                 >
                                                     ✕ Annuler
                                                 </button>
                                             </>
                                         )}
 
+                                        {/* Step 2: Confirmée -> Expédiée */}
                                         {activeStatus === 'Confirmed' && (
                                             <button
                                                 disabled={updatingId === order._id}
-                                                onClick={() => handleStatusChange(order._id, 'In Transit')}
+                                                onClick={() => handleStatusChange(order._id, 'Shipped')}
                                                 style={{ padding: '6px 12px', backgroundColor: '#8B5CF6', color: '#FFF', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
                                             >
-                                                🚚 Expédier (In Transit)
+                                                🚚 Marquer Expédiée
                                             </button>
                                         )}
 
-                                        {activeStatus === 'In Transit' && (
-                                            <button
-                                                disabled={updatingId === order._id}
-                                                onClick={() => handleStatusChange(order._id, 'Delivered')}
-                                                style={{ padding: '6px 12px', backgroundColor: '#10B981', color: '#FFF', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
-                                            >
-                                                📦 Marquer comme Livré
-                                            </button>
+                                        {/* Step 3: Expédiée -> Livrée & Payée ou Retour */}
+                                        {activeStatus === 'Shipped' && (
+                                            <>
+                                                <button
+                                                    disabled={updatingId === order._id}
+                                                    onClick={() => handleStatusChange(order._id, 'Completed')}
+                                                    style={{ padding: '6px 12px', backgroundColor: '#10B981', color: '#FFF', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                >
+                                                    ✅ Livrée & Payée
+                                                </button>
+                                                <button
+                                                    disabled={updatingId === order._id}
+                                                    onClick={() => handleStatusChange(order._id, 'Retour')}
+                                                    style={{ padding: '6px 12px', backgroundColor: '#EF4444', color: '#FFF', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                >
+                                                    🔄 Retour (Refusée)
+                                                </button>
+                                            </>
                                         )}
                                     </div>
                                 </div>
