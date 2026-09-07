@@ -69,7 +69,14 @@ const orderSchema = new Schema({
     // Admin Confirmation Workflow (COD)
     status: {
         type: String,
-        enum: ['Pending_Confirmation', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'],
+        enum: [
+            'Pending_Confirmation', // Order placed by guest, awaiting phone call
+            'Confirmed',            // Support team called and buyer confirmed order
+            'Shipped',              // Package given to delivery company (Yalidine, ZR, etc.)
+            'Livré',                // Handed over & paid by buyer (Completed sale)
+            'Retour',               // Customer refused item or delivery failed (Item returned to stock)
+            'Cancelled'             // Cancelled over phone before shipping
+        ],
         default: 'Pending_Confirmation'
     },
     adminNotes: { 
@@ -80,4 +87,4 @@ const orderSchema = new Schema({
     timestamps: true 
 });
 
-module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model('Orders', orderSchema);

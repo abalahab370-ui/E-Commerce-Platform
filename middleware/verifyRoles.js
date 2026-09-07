@@ -9,7 +9,8 @@ const verifyRoles = (...allowedRoles) => {
                   return res.status(401).json( { 'message' : 'Unauthorized'} )
             }
             const rolesArray = [...allowedRoles] ;
-            const result = req.roles.map( role => rolesArray.includes(role)).find(val => val === true) ;
+            const userRoles = Array.isArray(req.roles) ? req.roles : [req.roles] ;
+            const result = userRoles.some(role => rolesArray.includes(role)) ;
             if (!result) {
                   return res.status(401).json( { 'message' : 'Unauthorized'} )
             }

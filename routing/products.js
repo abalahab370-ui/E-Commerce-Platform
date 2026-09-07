@@ -1,5 +1,6 @@
 const express = require("express") ;
 const router = express.Router() ;
+const getProductById = require("../Controllers/getProductById") ;
 const getProducts = require("../Controllers/getProduct") ;
 const createProduct = require("../Controllers/createProduct");
 const updateProduct = require("../Controllers/updatingProductController")
@@ -11,6 +12,10 @@ const multer = require("../middleware/multer");
 // well all are allowed to get products : 
 
 router.get( '/' , getProducts ) ;
+
+// Get single product by ID
+
+router.get( '/:id' , getProductById ) ;
 
 // well only admin is the allowed to do access the rest !
 

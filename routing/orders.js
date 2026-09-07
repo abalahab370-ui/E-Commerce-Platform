@@ -9,7 +9,7 @@ const verfieJWT = require("../Controllers/verfieJWT") ;
 //all can access it :
 
 router.post( '/guest' ,createGuestOrder ) ;
-
+router.post( '/' ,createGuestOrder ) ;
 // well only admin is the allowed to access that !
 
 router.get( '/'  , verfieJWT , verifyRoles(ROLES.admin) , getOrders ) ;
