@@ -4,7 +4,7 @@ const cloudinary = require('../config/cloudinary');
 
 // @desc Create Product (Admin Only)
 // @route POST /api/v1/products
-const createProduct = async (req, res) => {
+const createNonStanderProduct = async (req, res) => {
     try {
         const { name, description, price , categoryId, isFeatured , colors , sizes , variants } = req.body;
 
@@ -60,4 +60,4 @@ const createProduct = async (req, res) => {
     }
 };
 
-module.exports =  createProduct;
+module.exports =  createNonStanderProduct;
