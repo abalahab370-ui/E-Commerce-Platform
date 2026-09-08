@@ -40,18 +40,22 @@ const createNonStanderProduct = async (req, res) => {
             uploadedImages = await Promise.all(imageUploadPromises);
         }
         // 3. Save product to MongoDB
+        const parsedVariants = typeof req.body.variants === 'string' 
+            ? JSON.parse(req.body.variants) 
+            : req.body.variants;
+
         const newProduct = await Product.create({
             name,
             description,
             price: Number(price),
             stock: Number(stock),
             category: categoryId,
-            isFeatured: isFeatured || false,
+            isFeatured: isFeatured === 'true' || isFeatured === true ,
             hasVariants: true,
             images: uploadedImages ,
             colors : colors ,
             sizes : sizes ,
-            variants : variants
+            variants : parsedVariants
         });
 
         res.status(201).json(newProduct);

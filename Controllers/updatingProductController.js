@@ -6,6 +6,7 @@ const cloudinary = require('../config/cloudinary.js');
 // @route   PUT /api/v1/products/:id
 const updateProduct = async (req, res) => {
     try {
+        const { hasVariants } = req.body ;
         const { name, description, price, stock, categoryId, isFeatured, removedImageIds } = req.body;
 
         let product = await Product.findById(req.params.id);
@@ -67,11 +68,28 @@ const updateProduct = async (req, res) => {
         }
 
         // 4. Update text fields if provided
+        if (hasVariants)  {
+
         if (name) product.name = name;
         if (description) product.description = description;
         if (price !== undefined) product.price = Number(price);
         if (stock !== undefined) product.stock = Number(stock);
-        if (isFeatured !== undefined) product.isFeatured = Boolean(isFeatured);
+        if (isFeatured !== undefined) product.isFeatured = isFeatured === 'true' || isFeatured === true;
+        
+        } else {
+            
+        if (req.body.variants) {
+            const parsedVariants = typeof req.body.variants === 'string' 
+                 ? JSON.parse(req.body.variants) 
+                 : req.body.variants;
+            product.variants = parsedVariants;
+        }
+        if (name) product.name = name;
+        if (description) product.description = description;
+        if (price !== undefined) product.price = Number(price);
+        if (isFeatured !== undefined) product.isFeatured = isFeatured === 'true' || isFeatured === true;
+        
+        }
 
         const updatedProduct = await product.save();
         res.status(200).json(updatedProduct);

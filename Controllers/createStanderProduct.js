@@ -47,7 +47,7 @@ const createStanderProduct = async (req, res) => {
             price: Number(price),
             stock: Number(stock),
             category: categoryId,
-            isFeatured: isFeatured || false,
+            isFeatured: isFeatured === 'true' || isFeatured === true,
             hasVariants: false,
             images: uploadedImages
         });
