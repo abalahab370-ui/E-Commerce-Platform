@@ -6,9 +6,9 @@ const cloudinary = require('../config/cloudinary');
 // @route POST /api/v1/products
 const createProduct = async (req, res) => {
     try {
-        const { name, description, price, stock, categoryId, isFeatured } = req.body;
+        const { name, description, price , categoryId, isFeatured , colors , sizes , variants } = req.body;
 
-        if (!name || !description || !price || !stock || !categoryId) {
+        if (!name || !description || !price  || !categoryId || !colors || !sizes || !variants) {
             return res.status(400).json({ message: 'All required fields must be provided' });
         }
 
@@ -39,7 +39,7 @@ const createProduct = async (req, res) => {
 
             uploadedImages = await Promise.all(imageUploadPromises);
         }
-
+        
         // 3. Save product to MongoDB
         const newProduct = await Product.create({
             name,
@@ -48,7 +48,11 @@ const createProduct = async (req, res) => {
             stock: Number(stock),
             category: categoryId,
             isFeatured: isFeatured || false,
-            images: uploadedImages
+            hasVariants: true,
+            images: uploadedImages ,
+            colors : colors ,
+            sizes : sizes ,
+            variants : variants
         });
 
         res.status(201).json(newProduct);
