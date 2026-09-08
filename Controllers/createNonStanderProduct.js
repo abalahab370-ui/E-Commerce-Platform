@@ -39,7 +39,6 @@ const createProduct = async (req, res) => {
 
             uploadedImages = await Promise.all(imageUploadPromises);
         }
-        
         // 3. Save product to MongoDB
         const newProduct = await Product.create({
             name,
