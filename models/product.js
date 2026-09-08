@@ -1,7 +1,32 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema ;
+const Schema = mongoose.Schema;
 
-const productSchema = new Schema ({
+// Variant sub-schema for clothing & shoes
+const variantSchema = new Schema({
+    color: { 
+        type: String, 
+        trim: true, 
+        default: '' 
+    },
+    size: { 
+        type: String, 
+        trim: true, 
+        default: '' 
+    },
+    stock: {
+        type: Number,
+        required: [true, 'Variant stock count is required'],
+        min: [0, 'Variant stock cannot be negative'],
+        default: 0
+    },
+    sku: { 
+        type: String, 
+        trim: true, 
+        default: '' 
+    }
+}, { _id: true });
+
+const productSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Product name is required'],
@@ -34,24 +59,23 @@ const productSchema = new Schema ({
     isFeatured: {
         type: Boolean,
         default: false
-    }
+    },
+    hasVariants: {
+        type: Boolean,
+        default: false
+    },
+    colors: [{ type: String }],
+    sizes: [{ type: String }],
+    variants: [variantSchema]
 }, 
 { 
-      timestamps: true 
-}
-);
+    timestamps: true 
+});
 
-// Create a compound text index for searching name and description
+// Text index for search
 productSchema.index(
-      {
-       name: 'text', description: 'text' 
-      } ,
-      {
-            weights: { 
-            name: 10, 
-            description: 1 
-        }
-      }
+    { name: 'text', description: 'text' },
+    { weights: { name: 10, description: 1 } }
 );
 
 module.exports = mongoose.model('Product', productSchema);

@@ -119,8 +119,14 @@ export const api = {
         apiFetch(`/categories/${id}`, { method: 'DELETE' }),
 
     // --- PRODUCTS ---
-    getProducts: () => 
-        apiFetch('/products'),
+    getProducts: (params = {}) => {
+        // Removes empty, null, or undefined fields prior to serializing
+        const cleanParams = Object.fromEntries(
+            Object.entries(params).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+        );
+        const queryString = new URLSearchParams(cleanParams).toString();
+        return apiFetch(`/products${queryString ? `?${queryString}` : ''}`);
+    },
 
     getProductById: (id) => 
         apiFetch(`/products/${id}`),
