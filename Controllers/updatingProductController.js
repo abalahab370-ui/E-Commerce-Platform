@@ -3,18 +3,17 @@ const Category = require('../models/category');
 const cloudinary = require('../config/cloudinary.js');
 
 // @desc    Update Product Details & Manage Images (Admin Only)
-// @route   PUT /api/v1/products/:id
+// @route   PATCH /api/v1/products/:id
 const updateProduct = async (req, res) => {
     try {
-        const { hasVariants } = req.body ;
-        const { name, description, price, stock, categoryId, isFeatured, removedImageIds } = req.body;
+        const { name, description, price, stock, categoryId, isFeatured, removedImageIds, variants } = req.body;
 
-        let product = await Product.findById(req.params.id);
+        const product = await Product.findById(req.params.id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        // 1. Verify new Category if categoryId is being changed
+        // 1. Verify Category if categoryId is being changed
         if (categoryId) {
             const categoryExists = await Category.findById(categoryId);
             if (!categoryExists) {
@@ -23,28 +22,30 @@ const updateProduct = async (req, res) => {
             product.category = categoryId;
         }
 
-        // 2. Remove specified images from Cloudinary and product.images array
-        // Expects removedImageIds as an array of strings or a single JSON string
+        // 2. Remove specified images from Cloudinary & product array
         if (removedImageIds) {
-            const idsToDelete = typeof removedImageIds === 'string' 
-                ? JSON.parse(removedImageIds) 
-                : removedImageIds;
+            let idsToDelete = [];
+            try {
+                idsToDelete = typeof removedImageIds === 'string' 
+                    ? JSON.parse(removedImageIds) 
+                    : removedImageIds;
+            } catch {
+                return res.status(400).json({ message: 'Invalid format for removedImageIds' });
+            }
 
             if (Array.isArray(idsToDelete) && idsToDelete.length > 0) {
-                // Delete from Cloudinary in parallel
                 const deletePromises = idsToDelete.map(publicId => 
                     cloudinary.uploader.destroy(publicId)
                 );
                 await Promise.all(deletePromises);
 
-                // Filter out deleted images from product's array
                 product.images = product.images.filter(
                     img => !idsToDelete.includes(img.publicId)
                 );
             }
         }
 
-        // 3. Upload new images to Cloudinary (if any were uploaded)
+        // 3. Upload new images to Cloudinary (if any)
         if (req.files && req.files.length > 0) {
             const newImagePromises = req.files.map(file => {
                 return new Promise((resolve, reject) => {
@@ -63,32 +64,38 @@ const updateProduct = async (req, res) => {
             });
 
             const newlyUploadedImages = await Promise.all(newImagePromises);
-            // Append new images to existing ones
             product.images.push(...newlyUploadedImages);
         }
 
-        // 4. Update text fields if provided
-        if (hasVariants)  {
-
-        if (name) product.name = name;
-        if (description) product.description = description;
+        // 4. Update shared text fields (DRY)
+        if (name) product.name = name.trim();
+        if (description) product.description = description.trim();
         if (price !== undefined) product.price = Number(price);
-        if (stock !== undefined) product.stock = Number(stock);
-        if (isFeatured !== undefined) product.isFeatured = isFeatured === 'true' || isFeatured === true;
-        
-        } else {
-            
-        if (req.body.variants) {
-            const parsedVariants = typeof req.body.variants === 'string' 
-                 ? JSON.parse(req.body.variants) 
-                 : req.body.variants;
-            product.variants = parsedVariants;
+        if (isFeatured !== undefined) {
+            product.isFeatured = isFeatured === 'true' || isFeatured === true;
         }
-        if (name) product.name = name;
-        if (description) product.description = description;
-        if (price !== undefined) product.price = Number(price);
-        if (isFeatured !== undefined) product.isFeatured = isFeatured === 'true' || isFeatured === true;
-        
+
+        // 5. Update inventory based on database document type
+        if (product.hasVariants) {
+            // Variant product branch
+            if (variants) {
+                let parsedVariants = variants;
+                if (typeof variants === 'string') {
+                    try {
+                        parsedVariants = JSON.parse(variants);
+                    } catch {
+                        return res.status(400).json({ message: 'Invalid variants JSON format' });
+                    }
+                }
+                if (Array.isArray(parsedVariants)) {
+                    product.variants = parsedVariants;
+                }
+            }
+        } else {
+            // Standard product branch
+            if (stock !== undefined) {
+                product.stock = Number(stock);
+            }
         }
 
         const updatedProduct = await product.save();
@@ -99,4 +106,4 @@ const updateProduct = async (req, res) => {
     }
 };
 
-module.exports =  updateProduct ;
+module.exports = updateProduct;
