@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { api } from '../../services/api';
 
-export default function Catalog({ onSelectProduct, onCartCheckout }) {
+export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckout }) {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     
@@ -61,7 +61,7 @@ export default function Catalog({ onSelectProduct, onCartCheckout }) {
         setLoading(true);
         setError('');
         try {
-            const queryParams = { page, limit: 12 };
+            const queryParams = { page, limit: 10 };
 
             if (debouncedSearch.trim()) queryParams.search = debouncedSearch.trim();
             if (selectedCategorySlug !== 'ALL') queryParams.category = selectedCategorySlug;
@@ -156,6 +156,15 @@ export default function Catalog({ onSelectProduct, onCartCheckout }) {
         }
         if (product.imageUrl) return [product.imageUrl];
         return ['/placeholder.png'];
+    };
+
+    const handleProceedToCheckout = () => {
+        setIsCartOpen(false);
+        if (onGoToCheckout) {
+            onGoToCheckout();
+        } else if (onCartCheckout) {
+            onCartCheckout(cart);
+        }
     };
 
     return (
@@ -621,13 +630,17 @@ export default function Catalog({ onSelectProduct, onCartCheckout }) {
                                 </div>
                                 <button 
                                     onClick={() => {
-                                        setIsCartOpen(false);
-                                        if (onCartCheckout) onCartCheckout(cart);
+                                          setIsCartOpen(false);
+                                          if (onGoToCheckout) {
+                                                onGoToCheckout();
+                                          } else if (onCartCheckout) {
+                                                onCartCheckout(cart);
+                                          }
                                     }}
                                     style={{ width: '100%', padding: '14px', backgroundColor: '#10B981', color: '#FFF', border: 'none', borderRadius: '8px', fontWeight: '800', fontSize: '14px', cursor: 'pointer' }}
-                                >
+                                    >
                                     Valider la Commande ({cartTotal} DZD)
-                                </button>
+                              </button>
                             </div>
                         )}
                     </div>

@@ -64,8 +64,6 @@ const productSchema = new Schema({
         type: Boolean,
         default: false
     },
-    colors: [{ type: String }],
-    sizes: [{ type: String }],
     variants: [variantSchema]
 }, 
 { 

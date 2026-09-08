@@ -6,9 +6,9 @@ const cloudinary = require('../config/cloudinary');
 // @route POST /api/v1/products
 const createNonStanderProduct = async (req, res) => {
     try {
-        const { name, description, price , categoryId, isFeatured , colors , sizes , variants } = req.body;
+        const { name, description, price , categoryId, isFeatured  , variants } = req.body;
 
-        if (!name || !description || !price  || !categoryId || !colors || !sizes || !variants) {
+        if (!name || !description || !price  || !categoryId  || !variants) {
             return res.status(400).json({ message: 'All required fields must be provided' });
         }
 
@@ -39,22 +39,23 @@ const createNonStanderProduct = async (req, res) => {
 
             uploadedImages = await Promise.all(imageUploadPromises);
         }
+        
         // 3. Save product to MongoDB
         const parsedVariants = typeof req.body.variants === 'string' 
             ? JSON.parse(req.body.variants) 
             : req.body.variants;
 
+        const totalStock = parsedVariants.reduce((sum, item) => sum + Number(item.stock || 0), 0);
+        
         const newProduct = await Product.create({
             name,
             description,
             price: Number(price),
-            stock: Number(stock),
+            stock: totalStock,
             category: categoryId,
             isFeatured: isFeatured === 'true' || isFeatured === true ,
             hasVariants: true,
             images: uploadedImages ,
-            colors : colors ,
-            sizes : sizes ,
             variants : parsedVariants
         });
 

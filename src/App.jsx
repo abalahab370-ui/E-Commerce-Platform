@@ -9,25 +9,57 @@ import CategoryManagement from './pages/admin/CategoryManagement';
 import Login from './pages/admin/Login';
 
 export default function App() {
-    // Mode switcher: 'store' or 'admin'
-    const [viewMode, setViewMode] = useState('store'); 
+    // Initial view mode based on browser URL (/admin or /login opens admin mode)
+    const [viewMode, setViewMode] = useState(() => {
+        const path = window.location.pathname;
+        return (path === '/admin' || path === '/login') ? 'admin' : 'store';
+    }); 
     
     // Auth state for Admin area
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
     const [adminTab, setAdminTab] = useState('orders');
 
-    // Customer store checkout selection
+    // Store navigation state
     const [selectedProductId, setSelectedProductId] = useState(null);
+    const [isCheckout, setIsCheckout] = useState(() => window.location.pathname === '/checkout');
 
+    // Sync state if user types in browser bar or presses Back/Forward buttons
     useEffect(() => {
-        const token = localStorage.getItem('adminToken');
-        setIsAuthenticated(!!token);
-    }, [viewMode]);
+        const handlePopState = () => {
+            const path = window.location.pathname;
+            if (path === '/admin' || path === '/login') {
+                setViewMode('admin');
+            } else {
+                setViewMode('store');
+                setIsCheckout(path === '/checkout');
+            }
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
+
+    // Sync URL path when switching views programmatically
+    const navigateTo = (path, mode) => {
+        window.history.pushState({}, '', path);
+        setViewMode(mode);
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('adminToken');
         setIsAuthenticated(false);
-        setViewMode('store');
+        navigateTo('/', 'store');
+    };
+
+    const handleResetStore = () => {
+        setSelectedProductId(null);
+        setIsCheckout(false);
+        window.history.pushState({}, '', '/');
+    };
+
+    const handleGoToCheckout = () => {
+        setIsCheckout(true);
+        window.history.pushState({}, '', '/checkout');
     };
 
     return (
@@ -35,18 +67,24 @@ export default function App() {
             {viewMode === 'store' ? (
                 <>
                     <StoreNavbar 
-                        onGoToAdmin={() => setViewMode('admin')} 
-                        onResetStore={() => setSelectedProductId(null)} 
+                        onGoToAdmin={() => navigateTo('/admin', 'admin')} 
+                        onResetStore={handleResetStore} 
+                        onGoToCheckout={handleGoToCheckout}
                     />
                     <main style={{ flex: 1 }}>
-                        {selectedProductId ? (
+                        {isCheckout || selectedProductId ? (
                             <Checkout 
                                 productId={selectedProductId} 
-                                onBackToStore={() => setSelectedProductId(null)} 
+                                onBackToStore={handleResetStore} 
                             />
                         ) : (
                             <Catalog 
-                                onSelectProduct={(id) => setSelectedProductId(id)} 
+                                onSelectProduct={(id) => {
+                                    setSelectedProductId(id);
+                                    handleGoToCheckout();
+                                }}
+                                onGoToCheckout={handleGoToCheckout}
+                                onCartCheckout={handleGoToCheckout}
                             />
                         )}
                     </main>
@@ -59,7 +97,7 @@ export default function App() {
                                 activeTab={adminTab} 
                                 setActiveTab={setAdminTab} 
                                 onLogout={handleLogout} 
-                                onGoToStore={() => setViewMode('store')} 
+                                onGoToStore={() => navigateTo('/', 'store')} 
                             />
                             <main style={{ flex: 1 }}>
                                 {adminTab === 'orders' && <OrdersDashboard />}
@@ -71,7 +109,7 @@ export default function App() {
                         <div style={{ flex: 1 }}>
                             <div style={{ padding: '16px', textAlign: 'center' }}>
                                 <button 
-                                    onClick={() => setViewMode('store')}
+                                    onClick={() => navigateTo('/', 'store')}
                                     style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: '13px', fontWeight: '700' }}
                                 >
                                     ← Retour à la boutique

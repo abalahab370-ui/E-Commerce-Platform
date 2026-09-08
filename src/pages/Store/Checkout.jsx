@@ -63,6 +63,16 @@ const ALGERIA_LOCATIONS = [
 ];
 
 export default function Checkout({ productId, onBackToStore }) {
+    // Read cart directly from localStorage
+    const [cartItems, setCartItems] = useState(() => {
+        try {
+            const saved = localStorage.getItem('storedz_cart');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
     const [product, setProduct] = useState(null);
     const [loadingProduct, setLoadingProduct] = useState(!!productId);
     const [quantity, setQuantity] = useState(1);
@@ -110,7 +120,19 @@ export default function Checkout({ productId, onBackToStore }) {
         setSubmitting(true);
         setError('');
 
-        // Payload formatted strictly to match createGuestOrder controller expectations
+        const orderItems = productId
+            ? [{ productId, quantity }]
+            : cartItems.map(item => ({
+                productId: item._id || item.id,
+                quantity: item.quantity
+              }));
+
+        if (orderItems.length === 0) {
+            setError('Votre panier est vide.');
+            setSubmitting(false);
+            return;
+        }
+
         const orderPayload = {
             shippingDetails: {
                 fullName: form.customerName,
@@ -120,11 +142,13 @@ export default function Checkout({ productId, onBackToStore }) {
                 deliveryType: 'home',
                 address: form.address
             },
-            items: productId ? [{ productId: productId, quantity }] : []
+            items: orderItems
         };
 
         try {
             await api.createGuestOrder(orderPayload);
+            localStorage.removeItem('storedz_cart');
+            setCartItems([]);
             setOrderSuccess(true);
         } catch (err) {
             setError(err.message || 'Échec lors de la validation de la commande.');
@@ -135,6 +159,13 @@ export default function Checkout({ productId, onBackToStore }) {
 
     const selectedWilayaObj = ALGERIA_LOCATIONS.find(loc => loc.name === form.wilaya);
     const availableCommunes = selectedWilayaObj ? selectedWilayaObj.communes : [];
+
+    const calculateTotal = () => {
+        if (productId && product) {
+            return product.price * quantity;
+        }
+        return cartItems.reduce((acc, item) => acc + ((item.price || 0) * (item.quantity || 1)), 0);
+    };
 
     if (orderSuccess) {
         return (
@@ -264,7 +295,7 @@ export default function Checkout({ productId, onBackToStore }) {
 
                     {loadingProduct ? (
                         <div style={{ fontSize: '12px', color: '#64748B' }}>Chargement du produit...</div>
-                    ) : product ? (
+                    ) : productId && product ? (
                         <div>
                             <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #F1F5F9' }}>
                                 {product.imageUrl && (
@@ -292,15 +323,27 @@ export default function Checkout({ productId, onBackToStore }) {
                                     >+</button>
                                 </div>
                             </div>
-
-                            <div style={{ borderTop: '2px dashed #E2E8F0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '14px', fontWeight: '800', color: '#0F172A' }}>Total à payer:</span>
-                                <span style={{ fontSize: '18px', fontWeight: '900', color: '#10B981' }}>{product.price * quantity} DZD</span>
-                            </div>
+                        </div>
+                    ) : cartItems.length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+                            {cartItems.map((item, index) => (
+                                <div key={item._id || item.id || index} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', borderBottom: '1px solid #F1F5F9', paddingBottom: '8px' }}>
+                                    <div>
+                                        <div style={{ fontWeight: '700', color: '#0F172A' }}>{item.name}</div>
+                                        <div style={{ fontSize: '11px', color: '#64748B' }}>Qté: {item.quantity}</div>
+                                    </div>
+                                    <span style={{ fontWeight: '700', color: '#10B981' }}>{item.price * item.quantity} DZD</span>
+                                </div>
+                            ))}
                         </div>
                     ) : (
-                        <div style={{ fontSize: '12px', color: '#94A3B8' }}>Aucun produit spécifique sélectionné.</div>
+                        <div style={{ fontSize: '12px', color: '#94A3B8' }}>Aucun article dans le panier.</div>
                     )}
+
+                    <div style={{ borderTop: '2px dashed #E2E8F0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '14px', fontWeight: '800', color: '#0F172A' }}>Total à payer:</span>
+                        <span style={{ fontSize: '18px', fontWeight: '900', color: '#10B981' }}>{calculateTotal()} DZD</span>
+                    </div>
                 </div>
 
             </div>

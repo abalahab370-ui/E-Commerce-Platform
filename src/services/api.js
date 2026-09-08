@@ -131,9 +131,15 @@ export const api = {
     getProductById: (id) => 
         apiFetch(`/products/${id}`),
 
-    createProduct: (formData) => 
-        apiFetch('/products', { method: 'POST', body: formData, isFormData: true }), // Multer upload
+    // Standard Product Creation (POST /products)
+    createStandardProduct: (formData) => 
+        apiFetch('/products', { method: 'POST', body: formData, isFormData: true }),
 
+    // Variant Product Creation (POST /products/variant)
+    createVariantProduct: (formData) => 
+        apiFetch('/products/variant', { method: 'POST', body: formData, isFormData: true }),
+
+    // Single route handles both variant and standard updates (PATCH /products/:id)
     updateProduct: (id, formData) => 
         apiFetch(`/products/${id}`, { method: 'PATCH', body: formData, isFormData: true }),
 
