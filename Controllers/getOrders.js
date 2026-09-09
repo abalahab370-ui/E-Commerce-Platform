@@ -35,7 +35,7 @@ const getOrders = async (req, res) => {
             Order.find(filter)
                 .sort({ createdAt: sortDirection })
                 .skip(skip)
-                .limit(limitNum),
+                .limit(limitNum).populate("items.product"),
             Order.countDocuments(filter)
         ]);
 

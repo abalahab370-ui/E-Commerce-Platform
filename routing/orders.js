@@ -3,6 +3,10 @@ const router = express.Router() ;
 const getOrders = require("../Controllers/getOrders") ;
 const createGuestOrder = require("../Controllers/createGuestOrder") ;
 const updateOrderStatus = require("../Controllers/updateOrderStatus") ;
+
+//v2
+const updateOrderStatusV2 = require("../Controllers/V2/updateOrderStatusV2") ;
+
 const {verifyRoles , ROLES } = require("../middleware/verifyRoles") ;
 const verfieJWT = require("../Controllers/verfieJWT") ;
 
@@ -15,5 +19,5 @@ router.post( '/' ,createGuestOrder ) ;
 router.get( '/'  , verfieJWT , verifyRoles(ROLES.admin) , getOrders ) ;
 
 router.patch( '/:id/status' , verfieJWT , verifyRoles(ROLES.admin) , updateOrderStatus) ;
-
+router.patch('v2/:id/status', updateOrderStatusV2);
 module.exports = router ;

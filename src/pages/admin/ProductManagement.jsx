@@ -128,7 +128,9 @@ export default function ProductManagement() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('Submitting edit form...', editingProduct?._id); // Check browser console
         setError('');
+    // ...
         setSubmitting(true);
 
         try {
@@ -146,6 +148,11 @@ export default function ProductManagement() {
 
             if (editingProduct) {
                 // UPDATE PATH (PATCH /:id)
+                
+                // 1. Send reordered existing images so backend saves the new main image (index 0)
+                payload.append('existingImages', JSON.stringify(existingImages));
+
+                // 2. Send removed image IDs
                 if (removedImageIds.length > 0) {
                     payload.append('removedImageIds', JSON.stringify(removedImageIds));
                 }
@@ -161,10 +168,10 @@ export default function ProductManagement() {
                 // CREATE PATH
                 if (isVariantProduct) {
                     payload.append('variants', JSON.stringify(variants));
-                    await api.createVariantProduct(payload); // Hits POST /variant
+                    await api.createVariantProduct(payload);
                 } else {
                     payload.append('stock', formData.stock);
-                    await api.createStandardProduct(payload); // Hits POST /
+                    await api.createStandardProduct(payload);
                 }
             }
 
@@ -175,6 +182,15 @@ export default function ProductManagement() {
         } finally {
             setSubmitting(false);
         }
+    };
+
+    const handleSetMainImage = (indexToMakeMain) => {
+    setExistingImages((prev) => {
+        const updated = [...prev];
+        const [selected] = updated.splice(indexToMakeMain, 1);
+        updated.unshift(selected);
+        return updated;
+    });
     };
 
     const handleDelete = async (productId) => {
@@ -360,37 +376,107 @@ export default function ProductManagement() {
                             />
                         </div>
 
-                        {/* Existing Images preview in edit mode */}
-                        {editingProduct && existingImages.length > 0 && (
-                            <div>
-                                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#64748B', marginBottom: '4px' }}>Images Actuelles</label>
-                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                                    {existingImages.map(img => (
-                                        <div key={img.publicId} style={{ position: 'relative', width: '45px', height: '45px' }}>
-                                            <img src={img.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
-                                            <button 
-                                                type="button" 
-                                                onClick={() => handleRemoveExistingImage(img.publicId)}
-                                                style={{ position: 'absolute', top: -4, right: -4, backgroundColor: '#EF4444', color: '#FFF', border: 'none', borderRadius: '50%', width: '16px', height: '16px', fontSize: '9px', cursor: 'pointer' }}
-                                            >
-                                                ✕
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+{/* Existing Images preview in edit mode with "Set Main" controls */}
+{editingProduct && existingImages.length > 0 && (
+    <div>
+        <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#64748B', marginBottom: '6px' }}>
+            Images Actuelles (La première est la principale)
+        </label>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {existingImages.map((img, index) => (
+                <div 
+                    key={img.publicId || index} 
+                    style={{ 
+                        position: 'relative', 
+                        width: '72px', 
+                        height: '72px', 
+                        borderRadius: '6px', 
+                        border: index === 0 ? '2px solid #10B981' : '1px solid #CBD5E1', 
+                        overflow: 'hidden',
+                        backgroundColor: '#F8FAFC'
+                    }}
+                >
+                    <img src={img.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
 
-                        <div>
-                            <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>Nouvelles Images</label>
-                            <input 
-                                type="file"
-                                accept="image/*"
-                                multiple 
-                                onChange={handleFileChange}
-                                style={{ fontSize: '12px', color: '#64748B' }}
-                            />
-                        </div>
+                    {/* MAIN BADGE (INDEX 0) OR SET MAIN BUTTON */}
+                    {index === 0 ? (
+                        <span style={{
+                            position: 'absolute',
+                            top: '2px',
+                            left: '2px',
+                            backgroundColor: '#10B981',
+                            color: '#FFF',
+                            fontSize: '8px',
+                            fontWeight: '800',
+                            padding: '2px 4px',
+                            borderRadius: '3px'
+                        }}>
+                            Principale
+                        </span>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={() => handleSetMainImage(index)}
+                            style={{
+                                position: 'absolute',
+                                bottom: '2px',
+                                left: '2px',
+                                right: '2px',
+                                backgroundColor: 'rgba(15, 23, 42, 0.85)',
+                                color: '#FFF',
+                                border: 'none',
+                                fontSize: '8px',
+                                fontWeight: '700',
+                                padding: '2px 0',
+                                borderRadius: '3px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Def. Principale
+                        </button>
+                    )}
+
+                    {/* REMOVE BUTTON */}
+                    <button 
+                        type="button" 
+                        onClick={() => handleRemoveExistingImage(img.publicId)}
+                        style={{ 
+                            position: 'absolute', 
+                            top: 2, 
+                            right: 2, 
+                            backgroundColor: '#EF4444', 
+                            color: '#FFF', 
+                            border: 'none', 
+                            borderRadius: '50%', 
+                            width: '16px', 
+                            height: '16px', 
+                            fontSize: '9px', 
+                            cursor: 'pointer', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center' 
+                        }}
+                    >
+                        ✕
+                    </button>
+                </div>
+            ))}
+        </div>
+    </div>
+)}
+
+<div>
+    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>
+        Nouvelles Images
+    </label>
+    <input 
+        type="file"
+        accept="image/*"
+        multiple 
+        onChange={handleFileChange}
+        style={{ fontSize: '12px', color: '#64748B' }}
+    />
+</div>
 
                         <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                             <button

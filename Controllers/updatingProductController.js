@@ -6,14 +6,24 @@ const cloudinary = require('../config/cloudinary.js');
 // @route   PATCH /api/v1/products/:id
 const updateProduct = async (req, res) => {
     try {
-        const { name, description, price, stock, categoryId, isFeatured, removedImageIds, variants } = req.body;
+        const { 
+            name, 
+            description, 
+            price, 
+            stock, 
+            categoryId, 
+            isFeatured, 
+            existingImages, // ADDED
+            removedImageIds, 
+            variants 
+        } = req.body;
 
         const product = await Product.findById(req.params.id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        // 1. Verify Category if categoryId is being changed
+        // 1. Verify Category
         if (categoryId) {
             const categoryExists = await Category.findById(categoryId);
             if (!categoryExists) {
@@ -22,7 +32,22 @@ const updateProduct = async (req, res) => {
             product.category = categoryId;
         }
 
-        // 2. Remove specified images from Cloudinary & product array
+        // 2. Handle Reordered Existing Images
+        if (existingImages) {
+            try {
+                const parsedExisting = typeof existingImages === 'string' 
+                    ? JSON.parse(existingImages) 
+                    : existingImages;
+                
+                if (Array.isArray(parsedExisting)) {
+                    product.images = parsedExisting; // Save new array order (index 0 = main)
+                }
+            } catch {
+                return res.status(400).json({ message: 'Invalid format for existingImages' });
+            }
+        }
+
+        // 3. Delete Cloudinary assets for removed images
         if (removedImageIds) {
             let idsToDelete = [];
             try {
@@ -39,13 +64,16 @@ const updateProduct = async (req, res) => {
                 );
                 await Promise.all(deletePromises);
 
-                product.images = product.images.filter(
-                    img => !idsToDelete.includes(img.publicId)
-                );
+                // Filter out destroyed images if existingImages wasn't supplied
+                if (!existingImages) {
+                    product.images = product.images.filter(
+                        img => !idsToDelete.includes(img.publicId)
+                    );
+                }
             }
         }
 
-        // 3. Upload new images to Cloudinary (if any)
+        // 4. Upload newly added files
         if (req.files && req.files.length > 0) {
             const newImagePromises = req.files.map(file => {
                 return new Promise((resolve, reject) => {
@@ -67,7 +95,7 @@ const updateProduct = async (req, res) => {
             product.images.push(...newlyUploadedImages);
         }
 
-        // 4. Update shared text fields (DRY)
+        // 5. Update shared fields
         if (name) product.name = name.trim();
         if (description) product.description = description.trim();
         if (price !== undefined) product.price = Number(price);
@@ -75,9 +103,8 @@ const updateProduct = async (req, res) => {
             product.isFeatured = isFeatured === 'true' || isFeatured === true;
         }
 
-        // 5. Update inventory based on database document type
+        // 6. Update inventory
         if (product.hasVariants) {
-            // Variant product branch
             if (variants) {
                 let parsedVariants = variants;
                 if (typeof variants === 'string') {
@@ -92,7 +119,6 @@ const updateProduct = async (req, res) => {
                 }
             }
         } else {
-            // Standard product branch
             if (stock !== undefined) {
                 product.stock = Number(stock);
             }

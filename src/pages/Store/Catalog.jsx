@@ -83,12 +83,23 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
 
     // Open Product Detail View
     const handleOpenProduct = (product) => {
-        setActiveModalProduct(product);
-        setSelectedImageIndex(0);
-        setSelectedColor(product.colors?.[0] || '');
-        setSelectedSize(product.sizes?.[0] || '');
-        setSelectedQuantity(1);
-    };
+    setActiveModalProduct(product);
+    setSelectedImageIndex(0);
+
+    // Extract unique colors from variants array, falling back to top-level colors array
+    const availableColors = product.variants && product.variants.length > 0
+        ? [...new Set(product.variants.map(v => v.color).filter(Boolean))]
+        : (product.colors || []);
+
+    // Extract unique sizes from variants array, falling back to top-level sizes array
+    const availableSizes = product.variants && product.variants.length > 0
+        ? [...new Set(product.variants.map(v => v.size).filter(Boolean))]
+        : (product.sizes || []);
+
+    setSelectedColor(availableColors[0] || '');
+    setSelectedSize(availableSizes[0] || '');
+    setSelectedQuantity(1);
+};
 
     // Add to Cart
     const handleAddToCart = (product, color, size, qty = 1, openCart = true) => {
@@ -166,6 +177,16 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
             onCartCheckout(cart);
         }
     };
+    
+    // Calculate variant options for the active modal
+    const modalColors = activeModalProduct?.variants?.length > 0
+        ? [...new Set(activeModalProduct.variants.map(v => v.color).filter(Boolean))]
+        : (activeModalProduct?.colors || []);
+
+    const modalSizes = activeModalProduct?.variants?.length > 0
+        ? [...new Set(activeModalProduct.variants.map(v => v.size).filter(Boolean))]
+        : (activeModalProduct?.sizes || []);
+
 
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
@@ -294,7 +315,75 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
                                         <div style={{ fontSize: '24px', fontWeight: '900', color: '#0F172A', marginBottom: '24px' }}>
                                             {activeModalProduct.price} <span style={{ fontSize: '14px', color: '#64748B', fontWeight: '600' }}>DZD</span>
                                         </div>
+                                        {/* RIGHT COLUMN: Details & Actions */}
+<div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div>
+        <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0F172A', margin: 0 }}>
+            {activeModalProduct.name}
+        </h2>
+    </div>
 
+
+    {/* COULEURS */}
+    {modalColors.length > 0 && (
+        <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '6px' }}>
+                Couleur: <span style={{ color: '#0F172A' }}>{selectedColor}</span>
+            </label>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {modalColors.map((color) => (
+                    <button
+                        key={color}
+                        type="button"
+                        onClick={() => setSelectedColor(color)}
+                        style={{
+                            padding: '6px 14px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            border: selectedColor === color ? '2px solid #10B981' : '1px solid #CBD5E1',
+                            backgroundColor: selectedColor === color ? '#ECFDF5' : '#FFF',
+                            color: selectedColor === color ? '#047857' : '#334155',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        {color}
+                    </button>
+                ))}
+            </div>
+        </div>
+    )}
+
+    {/* TAILLES */}
+    {modalSizes.length > 0 && (
+        <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '6px' }}>
+                Taille: <span style={{ color: '#0F172A' }}>{selectedSize}</span>
+            </label>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {modalSizes.map((size) => (
+                    <button
+                        key={size}
+                        type="button"
+                        onClick={() => setSelectedSize(size)}
+                        style={{
+                            padding: '6px 14px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            border: selectedSize === size ? '2px solid #10B981' : '1px solid #CBD5E1',
+                            backgroundColor: selectedSize === size ? '#ECFDF5' : '#FFF',
+                            color: selectedSize === size ? '#047857' : '#334155',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        {size}
+                    </button>
+                ))}
+            </div>
+        </div>
+    )}   
+</div>
                                         {/* Colors Selection */}
                                         {activeModalProduct.colors?.length > 0 && (
                                             <div style={{ marginBottom: '20px' }}>
