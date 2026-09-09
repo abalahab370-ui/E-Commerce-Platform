@@ -62,7 +62,7 @@ const ALGERIA_LOCATIONS = [
     { code: '58', name: '58 - In Guezzam', communes: ['In Guezzam', 'Tin Zaouatine'] }
 ];
 
-export default function Checkout({ productId, onBackToStore }) {
+export default function Checkout({ productId, selectedVariantId, selectedColor, selectedSize, onBackToStore }) {
     // Read cart directly from localStorage
     const [cartItems, setCartItems] = useState(() => {
         try {
@@ -120,11 +120,21 @@ export default function Checkout({ productId, onBackToStore }) {
         setSubmitting(true);
         setError('');
 
+        // Extract variant metadata for single product or cart items
         const orderItems = productId
-            ? [{ productId, quantity }]
+            ? [{
+                productId,
+                quantity,
+                variantId: selectedVariantId || null,
+                color: selectedColor || null,
+                size: selectedSize || null
+              }]
             : cartItems.map(item => ({
-                productId: item._id || item.id,
-                quantity: item.quantity
+                productId: item.productId || item._id || item.id,
+                quantity: item.quantity,
+                variantId: item.variantId || item.selectedVariantId || null,
+                color: item.color || item.selectedColor || null,
+                size: item.size || item.selectedSize || null
               }));
 
         if (orderItems.length === 0) {
@@ -303,7 +313,12 @@ export default function Checkout({ productId, onBackToStore }) {
                                 )}
                                 <div>
                                     <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>{product.name}</h4>
-                                    <span style={{ fontSize: '12px', color: '#10B981', fontWeight: '700' }}>{product.price} DZD</span>
+                                    {(selectedColor || selectedSize) && (
+                                        <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px' }}>
+                                            {selectedColor && `Couleur: ${selectedColor}`} {selectedSize && `| Taille: ${selectedSize}`}
+                                        </div>
+                                    )}
+                                    <span style={{ fontSize: '12px', color: '#10B981', fontWeight: '700', display: 'block', marginTop: '4px' }}>{product.price} DZD</span>
                                 </div>
                             </div>
 
@@ -330,6 +345,11 @@ export default function Checkout({ productId, onBackToStore }) {
                                 <div key={item._id || item.id || index} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', borderBottom: '1px solid #F1F5F9', paddingBottom: '8px' }}>
                                     <div>
                                         <div style={{ fontWeight: '700', color: '#0F172A' }}>{item.name}</div>
+                                        {(item.color || item.size) && (
+                                            <div style={{ fontSize: '11px', color: '#64748B' }}>
+                                                {item.color && `Couleur: ${item.color} `}{item.size && `| Taille: ${item.size}`}
+                                            </div>
+                                        )}
                                         <div style={{ fontSize: '11px', color: '#64748B' }}>Qté: {item.quantity}</div>
                                     </div>
                                     <span style={{ fontWeight: '700', color: '#10B981' }}>{item.price * item.quantity} DZD</span>

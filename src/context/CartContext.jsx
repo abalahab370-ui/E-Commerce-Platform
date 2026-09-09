@@ -4,8 +4,12 @@ const CartContext = createContext();
 
 export function CartProvider({ children }) {
     const [cart, setCart] = useState(() => {
-        const saved = localStorage.getItem('storedz_cart');
-        return saved ? JSON.parse(saved) : [];
+        try {
+            const saved = localStorage.getItem('storedz_cart');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
     });
     const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -15,7 +19,13 @@ export function CartProvider({ children }) {
 
     const addToCart = (product, selectedOptions = {}, quantity = 1) => {
         setCart(prev => {
-            const itemKey = `${product._id}-${selectedOptions.color || ''}-${selectedOptions.size || ''}`;
+            const productId = product._id || product.id;
+            const variantId = selectedOptions.variantId || selectedOptions._id || null;
+            const color = selectedOptions.color || null;
+            const size = selectedOptions.size || null;
+
+            // Composite key matching product + variant details
+            const itemKey = `${productId}-${variantId || ''}-${color || ''}-${size || ''}`;
             const existingIndex = prev.findIndex(item => item.key === itemKey);
 
             if (existingIndex > -1) {
@@ -26,12 +36,14 @@ export function CartProvider({ children }) {
 
             return [...prev, {
                 key: itemKey,
-                _id: product._id,
+                productId,
+                _id: productId, // Fallback compatibility
+                variantId,
                 name: product.name,
                 price: product.price,
-                image: product.images?.[0]?.url || '',
-                color: selectedOptions.color || null,
-                size: selectedOptions.size || null,
+                image: product.images?.[0]?.url || product.imageUrl || '',
+                color,
+                size,
                 quantity
             }];
         });
