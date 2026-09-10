@@ -1,30 +1,23 @@
 const express = require("express") ;
 const router = express.Router() ;
-const getOrders = require("../Controllers/getOrders") ;
-const createGuestOrder = require("../Controllers/createGuestOrder") ;
-const updateOrderStatus = require("../Controllers/updateOrderStatus") ;
+const getOrders = require("../../Controllers/V1/getOrders") ;
+const createGuestOrderV2 = require("../../Controllers/V1/createGuestOrderV2") ;
 
-//v2
-const updateOrderStatusV2 = require("../Controllers/V2/updateOrderStatusV2") ;
+//v2 (V1 doesnt exist sadlly)
+const updateOrderStatus = require("../../Controllers/V1/updateOrderStatus") ;
 
-const {verifyRoles , ROLES } = require("../middleware/verifyRoles") ;
-const verfieJWT = require("../Controllers/verfieJWT") ;
+const {verifyRoles , ROLES } = require("../../middleware/verifyRoles") ;
+const verfieJWT = require("../../Controllers/V1/verfieJWT") ;
 
 //all can access it :
 
-router.post( '/guest' ,createGuestOrder ) ;
-router.post( '/' ,createGuestOrder ) ;
-
-//V2 version :
-
-
-router.post( '/guest' ,createGuestOrder ) ;
-router.post( '/' ,createGuestOrder ) ;
+router.post( '/guest' ,createGuestOrderV2 ) ;
+router.post( '/' ,createGuestOrderV2 ) ;
 
 // well only admin is the allowed to access that !
 
 router.get( '/'  , verfieJWT , verifyRoles(ROLES.admin) , getOrders ) ;
 
 router.patch( '/:id/status' , verfieJWT , verifyRoles(ROLES.admin) , updateOrderStatus) ;
-router.patch('v2/:id/status', updateOrderStatusV2);
+
 module.exports = router ;

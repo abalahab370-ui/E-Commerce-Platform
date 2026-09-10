@@ -1,10 +1,10 @@
 const express = require("express") ;
 const router = express.Router() ;
-const { createCategory , getAllCategories } = require("../Controllers/categoryController") ;
-const {verifyRoles , ROLES } = require("../middleware/verifyRoles") ;
-const deleteCategory = require("../Controllers/deleteCategoryController") ;
-const updateCategory = require("../Controllers/updatingCategory") ;
-const verfieJWT = require("../Controllers/verfieJWT") ;
+const { createCategory , getAllCategories } = require("../../Controllers/V1/categoryController") ;
+const {verifyRoles , ROLES } = require("../../middleware/verifyRoles") ;
+const deleteCategory = require("../../Controllers/V1/deleteCategoryController") ;
+const updateCategory = require("../../Controllers/V1/updatingCategory") ;
+const verfieJWT = require("../../Controllers/V1/verfieJWT") ;
 
 // now we will add the routes for the category management :
 // we will add the route to get all the categories :

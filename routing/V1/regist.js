@@ -1,11 +1,11 @@
 const express = require("express") ;
 const router = express.Router() ;
 const path = require("path");
-const registHandler = require('../Controllers/registHandler') ;
-const inputController = require('../middleware/inputControlle') ;
+const registHandler = require('../../Controllers/V1/registHandler') ;
+const inputController = require('../../middleware/inputControlle') ;
 
 router.get ( '/' , (req , res) => {
-     res.redirect("/api");
+     res.redirect("/api"); // havent decide yet !
 });
 
 router.post( '/' , inputController ,registHandler ) ;

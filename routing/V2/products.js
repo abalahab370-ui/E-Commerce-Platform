@@ -1,14 +1,14 @@
 const express = require("express") ;
 const router = express.Router() ;
-const getProductById = require("../Controllers/getProductById") ;
-const getProducts = require("../Controllers/getProduct") ;
-const createStanderProduct = require("../Controllers/createStanderProduct") ;
-const createNonStanderProduct = require("../Controllers/createNonStanderProduct") ;
-const updateProduct = require("../Controllers/updatingProductController") ;
-const deleteProduct = require("../Controllers/deleteProductController") ;
-const {verifyRoles , ROLES } = require("../middleware/verifyRoles") ;
-const verfieJWT = require("../Controllers/verfieJWT") ;
-const multer = require("../middleware/multer") ;
+const getProductById = require("../../Controllers/V2/getProductById") ;
+const getProducts = require("../../Controllers/V2/getProduct") ;
+const createStanderProduct = require("../../Controllers/V2/createStanderProduct") ;
+const createNonStanderProduct = require("../../Controllers/V2/createNonStanderProduct") ;
+const updateProduct = require("../../Controllers/V2/updatingProductController") ;
+const deleteProduct = require("../../Controllers/V2/deleteProductController") ;
+const {verifyRoles , ROLES } = require("../../middleware/verifyRoles") ;
+const verfieJWT = require("../../Controllers/V2/verfieJWT") ;
+const multer = require("../../middleware/multer") ;
 
 // well all are allowed to get products : 
 
