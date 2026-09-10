@@ -70,6 +70,14 @@ const productSchema = new Schema({
     timestamps: true 
 });
 
+//to keep the updateOrderStatus and creatGuestOrder In V2 versoin clean So we caclulat
+productSchema.pre('save', function (next) {
+    if (this.hasVariants && Array.isArray(this.variants) && this.variants.length > 0) {
+        this.stock = this.variants.reduce((total, variant) => total + (Number(variant.stock) || 0), 0);
+    }
+    next();
+});
+
 // Text index for search
 productSchema.index(
     { name: 'text', description: 'text' },
