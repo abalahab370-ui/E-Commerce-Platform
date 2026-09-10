@@ -14,6 +14,13 @@ const verfieJWT = require("../Controllers/verfieJWT") ;
 
 router.post( '/guest' ,createGuestOrder ) ;
 router.post( '/' ,createGuestOrder ) ;
+
+//V2 version :
+
+
+router.post( '/guest' ,createGuestOrder ) ;
+router.post( '/' ,createGuestOrder ) ;
+
 // well only admin is the allowed to access that !
 
 router.get( '/'  , verfieJWT , verifyRoles(ROLES.admin) , getOrders ) ;

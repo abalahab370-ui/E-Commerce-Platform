@@ -1,5 +1,5 @@
 const Order = require("../models/order");
-const Product = require("../models/product"); // <-- Added missing Product import
+const Product = require("../models/product"); 
 
 // @desc    Update Order Status & Restock on Cancellation/Retour (Admin Only)
 // @route   PATCH /api/v1/orders/:id/status

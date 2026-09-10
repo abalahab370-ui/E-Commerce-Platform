@@ -30,16 +30,25 @@ app.use( (req ,res,next) => {
       next();
 })
 
-app.use('/api/v1/products' , rateLimiter , require("./routing/products")) ;
+//version V1 :
 
-app.use('/api/v1/categories' , rateLimiter, require("./routing/category")) ;
+app.use('/api/v1/products' , rateLimiter , require("./routing/V1/products")) ;
 
-app.use('/api/v1/orders' , rateLimiter , require("./routing/orders")) ;
+app.use('/api/v1/categories' , rateLimiter, require("./routing/V1/category")) ;
 
+app.use('/api/v1/orders' , rateLimiter , require("./routing/V1/orders")) ;
+
+//version V2 :
+
+app.use('/api/v2/products' , rateLimiter , require("./routing/V2/products")) ;
+
+app.use('/api/v2/categories' , rateLimiter, require("./routing/V2/category")) ;
+
+app.use('/api/v2/orders' , rateLimiter , require("./routing/V2/orders")) ;
+
+// auth verifiction routes : 
 
 app.use('/api/v1/auth/login' , rateLimiter , require("./routing/login") ) ;
-
-//app.use('/api/v1/regist' , rateLimiter,require("./routing/regist") ) ;
 
 app.use( '/api/v1/auth/refresh' , rateLimiter, require("./routing/refresh"))
 
