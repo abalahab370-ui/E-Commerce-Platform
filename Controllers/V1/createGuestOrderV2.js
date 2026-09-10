@@ -4,7 +4,7 @@ const { getDeliveryFee } = require('../../config/deliveryFees');
 
 // @desc    Create Guest Order with Variant & Standard Stock Validation (v2)
 // @route   POST /api/v2/orders/guest
-const createGuestOrderV2 = async (req, res) => {
+const createGuestOrderV2 = async (req, res , next) => {
     try {
         const { shippingDetails, items } = req.body;
 

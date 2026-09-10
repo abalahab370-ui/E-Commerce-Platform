@@ -8,19 +8,22 @@ const orderItemSchema = new Schema({
         ref: 'Product',
         required: true
     },
-    // Snapshots: Freezes the product details at purchase time
-    name: { 
+    name: { type: String, required: true }, 
+    price: { type: Number, required: true }, 
+    quantity: { type: Number, required: true, min: 1 },
+
+    // MUST BE DEFINED TO PERSIST IN MONGO
+    variantId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        default: null 
+    },
+    color: { 
         type: String, 
-        required: true 
-    }, 
-    price: { 
-        type: Number, 
-        required: true 
-    }, 
-    quantity: { 
-        type: Number, 
-        required: true, 
-        min: 1 
+        default: null 
+    },
+    size: { 
+        type: String, 
+        default: null 
     }
 });
 
