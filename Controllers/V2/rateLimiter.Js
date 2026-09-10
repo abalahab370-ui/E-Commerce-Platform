@@ -1,4 +1,4 @@
-const client = require("../config/rdConnection") ;
+const client = require("../../config/rdConnection") ;
 const express = require("express") ;
 
 

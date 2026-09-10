@@ -1,4 +1,4 @@
-const Product = require("../models/product") ;
+const Product = require("../../models/product") ;
 
 // Get single product by ID
 const getProductById = async (req, res) => {

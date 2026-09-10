@@ -1,5 +1,5 @@
-const Product = require("../models/product") ;
-const cloudinary = require("../config/cloudinary") ;
+const Product = require("../../models/product") ;
+const cloudinary = require("../../config/cloudinary") ;
 
 
 const deleteProduct = async (req , res) => {

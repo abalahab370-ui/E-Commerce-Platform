@@ -8,7 +8,7 @@ const corsOptions = require("./config/corsOptions") ;
 const cookieParser = require("cookie-parser") ;
 const mongoose  = require("mongoose") ;
 const connectDB = require("./config/dbconnect") ;
-const rateLimiter = require("./Controllers/rateLimiter.Js")
+const rateLimiter = require("./Controllers/V1/rateLimiter.Js")
 //Connecting to The DataBase : 
 connectDB() ;
 
@@ -48,11 +48,11 @@ app.use('/api/v2/orders' , rateLimiter , require("./routing/V2/orders")) ;
 
 // auth verifiction routes : 
 
-app.use('/api/v1/auth/login' , rateLimiter , require("./routing/login") ) ;
+app.use('/api/v1/auth/login' , rateLimiter , require("./routing/V1/login") ) ;
 
-app.use( '/api/v1/auth/refresh' , rateLimiter, require("./routing/refresh"))
+app.use( '/api/v1/auth/refresh' , rateLimiter, require("./routing/V1/refresh"))
 
-app.use( '/api/v1/auth/logout' , rateLimiter, require("./routing/logout"));
+app.use( '/api/v1/auth/logout' , rateLimiter, require("./routing/V1/logout"));
 
 //time for verfieJWT =-= !(refresh and verfie  , u will burnout ah coding life =*=)
 

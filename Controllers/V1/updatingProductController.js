@@ -1,6 +1,6 @@
-const Product = require('../models/product');
-const Category = require('../models/category');
-const cloudinary = require('../config/cloudinary.js');
+const Product = require('../../models/product');
+const Category = require('../../models/category');
+const cloudinary = require('../../config/cloudinary.js');
 
 // @desc    Update Product Details & Manage Images (Admin Only)
 // @route   PATCH /api/v1/products/:id

@@ -1,4 +1,4 @@
-const Order = require("../models/order");
+const Order = require("../../models/order");
 
 // @desc    Get Orders for Dashboard (Filtered by Status, Search, and Pagination)
 // @route   GET /api/v1/orders

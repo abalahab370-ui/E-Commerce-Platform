@@ -1,6 +1,6 @@
-const Order = require('../models/order');
-const Product = require('../models/product');
-const { getDeliveryFee } = require('../config/deliveryFees');
+const Order = require('../../models/order');
+const Product = require('../../models/product');
+const { getDeliveryFee } = require('../../config/deliveryFees');
 
 // @desc    Create Guest Order with Variant & Standard Stock Validation (v2)
 // @route   POST /api/v2/orders/guest

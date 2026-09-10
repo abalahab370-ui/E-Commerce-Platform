@@ -1,4 +1,4 @@
-const Category = require('../models/category');
+const Category = require('../../models/category');
 
 // @desc Create Category (Admin Only)
 // @route POST /api/v1/categories

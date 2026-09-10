@@ -1,5 +1,5 @@
-const Order = require("../models/order");
-const Product = require("../models/product");
+const Order = require("../../models/order");
+const Product = require("../../models/product");
 
 // @desc    Update Order Status & Restock/Re-deduct on Cancellation/Retour (v2)
 // @route   PATCH /api/v2/orders/:id/status

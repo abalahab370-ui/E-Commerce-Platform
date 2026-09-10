@@ -4,7 +4,7 @@ const getOrders = require("../../Controllers/V2/getOrders") ;
 const createGuestOrderV2 = require("../../Controllers/V2/createGuestOrderV2") ;
 const updateOrderStatusV2 = require("../../Controllers/V2/updateOrderStatusV2") ;
 
-const {verifyRoles , ROLES } = require("../middleware/verifyRoles") ;
+const {verifyRoles , ROLES } = require("../../middleware/verifyRoles") ;
 const verfieJWT = require("../../Controllers/V2/verfieJWT") ;
 
 //all can access it :

@@ -1,6 +1,6 @@
-const Product = require('../models/product');
-const Category = require('../models/category');
-const cloudinary = require('../config/cloudinary');
+const Product = require('../../models/product');
+const Category = require('../../models/category');
+const cloudinary = require('../../config/cloudinary');
 
 // @desc Create Product (Admin Only)
 // @route POST /api/v1/products
