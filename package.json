@@ -6,7 +6,8 @@
   "scripts": {
     "server": "node server.js",
     "client": "vite",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"" ,
+    "build": "vite build"
   },
   "keywords": [],
   "author": "",
