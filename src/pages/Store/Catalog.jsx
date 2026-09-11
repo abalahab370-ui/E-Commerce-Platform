@@ -133,13 +133,35 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
 
     // "Acheter maintenant" (Buy Now)
     const handleBuyNow = (product, color, size, qty) => {
-        handleAddToCart(product, color, size, qty, false);
-        setActiveModalProduct(null);
-        if (onSelectProduct) {
-            onSelectProduct(product._id);
-        } else if (onCartCheckout) {
-            onCartCheckout(cart);
-        }
+    // 1. Locate matching variant ID from selection
+    const selectedVariant = product?.variants?.find(
+        v => v.color === color && v.size === size
+    );
+    const variantId = selectedVariant?._id || null;
+
+    // 2. Build the order item object
+    const newItem = {
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        quantity: qty,
+        variantId,
+        color,
+        size,
+        image: product.images?.[0]?.url || product.imageUrl
+    };
+
+    setActiveModalProduct(null);
+
+    // 3. Forward full selection details to checkout handlers
+    if (onSelectProduct) {
+        // Pass productId AND selection details to parent
+        onSelectProduct(product._id, { variantId, color, size, qty });
+    } else if (onCartCheckout) {
+        // Pass the updated cart directly so state isn't stale
+        const currentCart = JSON.parse(localStorage.getItem('storedz_cart') || '[]');
+        onCartCheckout([...currentCart, newItem]);
+    }
     };
 
     const updateQuantity = (itemKey, delta) => {

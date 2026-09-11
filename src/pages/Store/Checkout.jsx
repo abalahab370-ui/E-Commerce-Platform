@@ -85,6 +85,7 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
         phone: '',
         wilaya: '16 - Alger',
         baladiya: '',
+        deliveryType: 'home', // Options: 'home' or 'desk'
         address: ''
     });
 
@@ -149,7 +150,7 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
                 phone: form.phone,
                 wilaya: form.wilaya,
                 baladiya: form.baladiya,
-                deliveryType: 'home',
+                deliveryType: form.deliveryType, // Passed dynamically ('home' or 'desk')
                 address: form.address
             },
             items: orderItems
@@ -277,6 +278,58 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
                         </select>
                     </div>
 
+                    {/* Delivery Type Selector */}
+                    <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '6px' }}>Mode de Livraison *</label>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <label style={{
+                                flex: 1,
+                                padding: '10px 12px',
+                                border: `2px solid ${form.deliveryType === 'home' ? '#10B981' : '#E2E8F0'}`,
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                backgroundColor: form.deliveryType === 'home' ? '#ECFDF5' : '#FFF'
+                            }}>
+                                <input 
+                                    type="radio" 
+                                    name="deliveryType" 
+                                    value="home" 
+                                    checked={form.deliveryType === 'home'} 
+                                    onChange={handleInputChange} 
+                                />
+                                 À Domicile
+                            </label>
+
+                            <label style={{
+                                flex: 1,
+                                padding: '10px 12px',
+                                border: `2px solid ${form.deliveryType === 'desk' ? '#10B981' : '#E2E8F0'}`,
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                backgroundColor: form.deliveryType === 'desk' ? '#ECFDF5' : '#FFF'
+                            }}>
+                                <input 
+                                    type="radio" 
+                                    name="deliveryType" 
+                                    value="desk" 
+                                    checked={form.deliveryType === 'desk'} 
+                                    onChange={handleInputChange} 
+                                />
+                                 Au Bureau
+                            </label>
+                        </div>
+                    </div>
+
                     <div>
                         <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>Adresse Exacte *</label>
                         <textarea
@@ -285,7 +338,7 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
                             onChange={handleInputChange}
                             required
                             rows="2"
-                            placeholder="Rue, N° de maison, quartier..."
+                            placeholder={form.deliveryType === 'desk' ? 'Point relais / Adresse du bureau de livraison...' : 'Rue, N° de maison, quartier...'}
                             style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box', resize: 'vertical' }}
                         />
                     </div>

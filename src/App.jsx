@@ -21,6 +21,8 @@ export default function App() {
 
     // Store navigation state
     const [selectedProductId, setSelectedProductId] = useState(null);
+    // NEW: Track variant metadata for Direct Buy ("Acheter maintenant")
+    const [directBuyDetails, setDirectBuyDetails] = useState(null);
     const [isCheckout, setIsCheckout] = useState(() => window.location.pathname === '/checkout');
 
     // Sync state if user types in browser bar or presses Back/Forward buttons
@@ -53,6 +55,7 @@ export default function App() {
 
     const handleResetStore = () => {
         setSelectedProductId(null);
+        setDirectBuyDetails(null); // Clear variant state on reset
         setIsCheckout(false);
         window.history.pushState({}, '', '/');
     };
@@ -74,13 +77,17 @@ export default function App() {
                     <main style={{ flex: 1 }}>
                         {isCheckout || selectedProductId ? (
                             <Checkout 
-                                productId={selectedProductId} 
+                                productId={selectedProductId}
+                                selectedVariantId={directBuyDetails?.variantId || null}
+                                selectedColor={directBuyDetails?.color || null}
+                                selectedSize={directBuyDetails?.size || null}
                                 onBackToStore={handleResetStore} 
                             />
                         ) : (
                             <Catalog 
-                                onSelectProduct={(id) => {
+                                onSelectProduct={(id, variantData) => {
                                     setSelectedProductId(id);
+                                    setDirectBuyDetails(variantData || null); // Save variant details
                                     handleGoToCheckout();
                                 }}
                                 onGoToCheckout={handleGoToCheckout}

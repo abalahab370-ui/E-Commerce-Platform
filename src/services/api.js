@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5500/api/v1';
+const API_BASE_URL = 'http://localhost:5500/api/v2';
 
 /**
  * Core wrapper around fetch to handle headers, credentials, and auto-refreshing expired tokens.
