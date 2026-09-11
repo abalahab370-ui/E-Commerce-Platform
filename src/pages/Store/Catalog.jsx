@@ -551,7 +551,7 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
                         <div style={{ position: 'relative' }}>
                             <input 
                                 type="text"
-                                placeholder="🔍 Rechercher un produit..."
+                                placeholder=" Rechercher un produit..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
