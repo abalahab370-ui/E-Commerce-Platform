@@ -150,9 +150,16 @@ export const api = {
     createGuestOrder: (orderData) => 
         apiFetch('/orders', { method: 'POST', body: orderData }),
 
-    getOrders: (status = 'Pending_Confirmation') => 
-        apiFetch(`/orders?status=${status}`),
+    // ✅ FIXED: Accepts both status and search, converting them into query parameters
+    getOrders: (status = 'Pending_Confirmation', search = '') => {
+        const params = new URLSearchParams();
+        
+        if (status) params.append('status', status);
+        if (search && search.trim() !== '') params.append('search', search.trim());
+
+        return apiFetch(`/orders?${params.toString()}`);
+    },
 
     updateOrderStatus: (orderId, status) => 
         apiFetch(`/orders/${orderId}/status`, { method: 'PATCH', body: { status } }),
-};
+}

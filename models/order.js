@@ -91,4 +91,13 @@ const orderSchema = new Schema({
     timestamps: true 
 });
 
+// In Order.js schema (no explicit name needed)
+orderSchema.index(
+    { 
+        'shippingDetails.fullName': 'text', 
+        'shippingDetails.phone': 'text' 
+    },
+    { default_language: 'none' }
+);
+
 module.exports = mongoose.model('Orders', orderSchema);

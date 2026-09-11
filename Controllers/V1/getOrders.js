@@ -1,6 +1,6 @@
 const Order = require("../../models/order");
 
-// @desc    Get Orders for Dashboard (Filtered by Status, Search, and Pagination)
+// @desc    Get Orders for Dashboard (Filtered strictly within active Status Tab)
 // @route   GET /api/v1/orders
 const getOrders = async (req, res) => {
     try {
@@ -8,34 +8,33 @@ const getOrders = async (req, res) => {
 
         const filter = {};
 
-        // 1. Filter by Order Status Tab (e.g., 'Pending_Confirmation', 'Confirmed', 'Shipped', etc.)
+        // 1. Always enforce the selected status tab
         if (status) {
             filter.status = status;
         }
 
-        // 2. Search by Customer Full Name or Phone Number using your $regex style
-        if (search) {
-            // Escape special regex characters to prevent crashes from raw user input
-            const safeSearch = search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-
-            filter.$or = [
-                { 'shippingDetails.fullName': { $regex: safeSearch, $options: 'i' } },
-                { 'shippingDetails.phone': { $regex: safeSearch, $options: 'i' } }
-            ];
+        // 2. Apply $text search scoped STRICTLY inside that status tab
+        if (search && search.trim() !== '') {
+            filter.$text = {
+                $search: search.trim(),
+                $caseSensitive: false,
+                $diacriticSensitive: false
+            };
         }
 
         const pageNum = Math.max(1, Number(page));
         const limitNum = Math.max(1, Number(limit));
         const skip = (pageNum - 1) * limitNum;
 
-        // Sorting: FIFO (Oldest first) for Pending calls so rep handles oldest orders first
+        // FIFO for pending orders, LIFO for finished statuses
         const sortDirection = status === 'Pending_Confirmation' ? 1 : -1;
 
         const [orders, totalOrders] = await Promise.all([
             Order.find(filter)
                 .sort({ createdAt: sortDirection })
                 .skip(skip)
-                .limit(limitNum).populate("items.product"),
+                .limit(limitNum)
+                .populate("items.product"),
             Order.countDocuments(filter)
         ]);
 
@@ -51,4 +50,4 @@ const getOrders = async (req, res) => {
     }
 };
 
-module.exports = getOrders ;
+module.exports = getOrders;
