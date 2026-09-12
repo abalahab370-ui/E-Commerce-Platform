@@ -56,7 +56,14 @@ app.use( '/api/v2/auth/logout' , rateLimiter, require("./routing/V1/logout"));
 
 //time for verfieJWT =-= !(refresh and verfie  , u will burnout ah coding life =*=)
 
+app.get("/ping", (req, res) => {
+  res.status(200).send("OK");
+});
 
+
+app.use( (req, res) => {
+  res.status(404).send("Not Found.");
+});
 
 mongoose.connection.once("open" , () => {
 
