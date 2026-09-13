@@ -14,4 +14,5 @@ const categorySchema = new Schema ({
     buttonText: { type: String, default: 'Explore Collection' } // e.g., "Shop The Look"
 }, { timestamps: true });
 
-export default mongoose.model('Category', categorySchema);
+
+module.exports = mongoose.model('Category', categorySchema);
