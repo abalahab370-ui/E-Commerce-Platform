@@ -1,55 +1,77 @@
 import React from 'react';
 
-export default function BentoHero() {
+export default function BentoHero({ onShopCategory }) {
     return (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-2">
+            {/* Mobile: Horizontal Swipe Carousel | Desktop: 3-Tile Bento Grid */}
+            <div className="flex md:grid md:grid-cols-12 gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2 md:pb-0">
                 
-                {/* Tile 1: Minimalist Home Decor (5 cols) */}
-                <div className="md:col-span-5 bg-[#161821] border border-[#222634] rounded-3xl p-8 flex flex-col justify-end relative overflow-hidden min-h-[280px] group cursor-pointer">
+                {/* TILE 1: Minimalist Home Decor */}
+                <div className="min-w-[85%] sm:min-w-[80%] md:min-w-0 md:col-span-6 relative rounded-3xl overflow-hidden bg-[#161821] border border-[#222634] group h-[250px] sm:h-[300px] md:h-[350px] snap-center flex-shrink-0">
                     <img 
-                        src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80" 
+                        src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=80" 
                         alt="Minimalist Home Decor" 
-                        className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-500"
+                        className="absolute inset-0 w-full h-full object-cover object-center opacity-50 group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/40 to-transparent"></div>
-                    <div className="relative z-10">
-                        <h2 className="font-serif text-2xl font-bold text-white uppercase tracking-tight leading-tight max-w-xs">
-                            Minimalist home decor: <br />
-                            <span className="text-gray-300">Curated Essentials</span>
-                        </h2>
-                    </div>
-                </div>
-
-                {/* Tile 2: Tech Essentials (4 cols) */}
-                <div className="md:col-span-4 bg-[#161821] border border-[#222634] rounded-3xl p-8 flex flex-col justify-end relative overflow-hidden min-h-[280px] group cursor-pointer">
-                    <img 
-                        src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80" 
-                        alt="Tech Essentials" 
-                        className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-black/30 to-transparent"></div>
-                    <div className="relative z-10">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-[#10B981] mb-1 block">
-                            Tech Essentials
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/40 to-transparent" />
+                    
+                    <div className="relative z-10 h-full p-5 sm:p-7 flex flex-col justify-end items-start">
+                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-full border border-[#10B981]/20 mb-2">
+                            Featured Collection
                         </span>
-                        <h3 className="font-serif text-xl font-bold text-white uppercase leading-tight">
-                            Level Up <br />Your Setup
-                        </h3>
+                        <h2 className="font-serif text-xl sm:text-2xl md:text-3xl font-extrabold text-[#10B981] leading-tight mb-3 uppercase tracking-tight max-w-md">
+                            Minimalist Home Decor: <span className="text-white block sm:inline">Curated Essentials</span>
+                        </h2>
+                        <button 
+                            onClick={() => onShopCategory?.('home-decor')}
+                            className="bg-[#10B981] hover:bg-[#059669] text-black font-black text-[11px] sm:text-xs uppercase tracking-wider px-5 py-2.5 rounded-full transition-all shadow-lg shadow-[#10B981]/20 cursor-pointer active:scale-95"
+                        >
+                            Shop The Look
+                        </button>
                     </div>
                 </div>
 
-                {/* Tile 3: Bold Innovations (3 cols) */}
-                <div className="md:col-span-3 bg-[#10B981] rounded-3xl p-8 flex flex-col justify-end relative overflow-hidden min-h-[280px] group cursor-pointer">
+                {/* TILE 2: Level Up Your Setup */}
+                <div className="min-w-[75%] sm:min-w-[70%] md:min-w-0 md:col-span-3 relative rounded-3xl overflow-hidden bg-[#161821] border border-[#222634] group h-[250px] sm:h-[300px] md:h-[350px] snap-center flex-shrink-0">
+                    <img 
+                        src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80" 
+                        alt="Tech Essentials" 
+                        className="absolute inset-0 w-full h-full object-cover object-center opacity-45 group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/30 to-transparent" />
+                    
+                    <div className="relative z-10 h-full p-5 sm:p-6 flex flex-col justify-end items-start">
+                        <h3 className="font-serif text-lg sm:text-xl md:text-2xl font-bold text-white leading-snug mb-3 uppercase">
+                            Level Up <br className="hidden sm:inline" />Your Setup
+                        </h3>
+                        <button 
+                            onClick={() => onShopCategory?.('tech')}
+                            className="bg-[#0B0D12]/90 hover:bg-[#222634] text-white font-black text-[11px] sm:text-xs uppercase tracking-wider px-4 py-2 rounded-full transition-all border border-gray-700/60 cursor-pointer active:scale-95"
+                        >
+                            Explore Tech
+                        </button>
+                    </div>
+                </div>
+
+                {/* TILE 3: Bold Innovations */}
+                <div className="min-w-[75%] sm:min-w-[70%] md:min-w-0 md:col-span-3 relative rounded-3xl overflow-hidden bg-[#10B981] border border-[#10B981]/40 group h-[250px] sm:h-[300px] md:h-[350px] snap-center flex-shrink-0">
                     <img 
                         src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80" 
                         alt="Bold Innovations" 
-                        className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50 group-hover:scale-105 transition-transform duration-500"
+                        className="absolute inset-0 w-full h-full object-cover object-center opacity-40 mix-blend-multiply group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
-                    <div className="relative z-10">
-                        <h3 className="font-serif text-2xl font-black text-black uppercase leading-tight tracking-tight">
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/80 via-transparent to-transparent" />
+                    
+                    <div className="relative z-10 h-full p-5 sm:p-6 flex flex-col justify-end items-start">
+                        <h3 className="font-serif text-lg sm:text-xl md:text-2xl font-black text-white sm:text-black uppercase leading-tight tracking-tight mb-3">
                             Bold <br />Innovations
                         </h3>
+                        <button 
+                            onClick={() => onShopCategory?.('eco')}
+                            className="bg-black/90 hover:bg-black text-white font-black text-[11px] sm:text-xs uppercase tracking-wider px-4 py-2 rounded-full transition-all border border-[#10B981]/40 cursor-pointer active:scale-95"
+                        >
+                            Shop Eco Collection
+                        </button>
                     </div>
                 </div>
 

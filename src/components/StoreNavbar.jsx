@@ -15,14 +15,7 @@ export default function StoreNavbar({ onGoToAdmin, onResetStore, onGoToCheckout 
 
                 {/* Right Actions */}
                 <div className="flex items-center gap-4 text-xs font-semibold">
-                    <button 
-                        onClick={onGoToAdmin}
-                        className="text-gray-400 hover:text-white transition-colors cursor-pointer"
-                    >
-                        Admin
-                    </button>
 
-                    <div className="text-gray-600">|</div>
 
                     <div className="text-gray-400 flex items-center gap-2">
                         <span className="cursor-pointer hover:text-white">EN</span>
