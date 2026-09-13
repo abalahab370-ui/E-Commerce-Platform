@@ -19,10 +19,11 @@ export default function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
     const [adminTab, setAdminTab] = useState('orders');
 
-    // Store navigation state
+    // Store navigation state & Cart drawer state lifted for global access
     const [selectedProductId, setSelectedProductId] = useState(null);
     const [directBuyDetails, setDirectBuyDetails] = useState(null);
     const [isCheckout, setIsCheckout] = useState(() => window.location.pathname === '/checkout');
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
     // Sync state if user types in browser bar or presses Back/Forward buttons
     useEffect(() => {
@@ -56,11 +57,13 @@ export default function App() {
         setSelectedProductId(null);
         setDirectBuyDetails(null);
         setIsCheckout(false);
+        setIsCartOpen(false);
         window.history.pushState({}, '', '/');
     };
 
     const handleGoToCheckout = () => {
         setIsCheckout(true);
+        setIsCartOpen(false);
         window.history.pushState({}, '', '/checkout');
     };
 
@@ -71,7 +74,7 @@ export default function App() {
                     <StoreNavbar 
                         onGoToAdmin={() => navigateTo('/admin', 'admin')} 
                         onResetStore={handleResetStore} 
-                        onGoToCheckout={handleGoToCheckout}
+                        onOpenCart={() => setIsCartOpen(true)}
                     />
                     <main className="flex-1 w-full">
                         {isCheckout || selectedProductId ? (
@@ -84,6 +87,8 @@ export default function App() {
                             />
                         ) : (
                             <Catalog 
+                                isCartOpen={isCartOpen}
+                                setIsCartOpen={setIsCartOpen}
                                 onSelectProduct={(id, variantData) => {
                                     setSelectedProductId(id);
                                     setDirectBuyDetails(variantData || null);
