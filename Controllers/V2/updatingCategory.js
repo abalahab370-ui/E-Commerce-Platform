@@ -7,7 +7,7 @@ const cloudinary = require("../../config/cloudinary");
 const uploadFromBuffer = (buffer) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: "categories" },
+      { folder: "storedz/categories" },
       (error, result) => {
         if (result) resolve(result);
         else reject(error);
