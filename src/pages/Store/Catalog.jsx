@@ -99,6 +99,18 @@ export default function Catalog({
         fetchProducts();
     }, [fetchProducts]);
 
+    // Hero Selection Handler with Auto-Scroll & Filter
+    const handleHeroCategorySelect = (categorySlug) => {
+        setSelectedCategorySlug(categorySlug);
+        setPage(1);
+
+        // Scroll cleanly to the products grid section
+        const catalogSection = document.getElementById('catalog-products-section');
+        if (catalogSection) {
+            catalogSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     // Open Product Detail View
     const handleOpenProduct = (product) => {
         setActiveModalProduct(product);
@@ -212,8 +224,13 @@ export default function Catalog({
     return (
         <div className="bg-[#0B0D12] text-gray-100 min-h-screen pb-16 font-sans selection:bg-[#10B981] selection:text-black">
             
-            {/* Bento Grid Hero Banner */}
-            {!activeModalProduct && <BentoHero />}
+            {/* Bento Grid Hero Banner (With live categories & click navigation) */}
+            {!activeModalProduct && (
+                <BentoHero 
+                    categories={categories} 
+                    onSelectCategory={handleHeroCategorySelect} 
+                />
+            )}
 
             {/* SEARCH & FILTERS CONTAINER - Hidden in Detail View */}
             {!activeModalProduct && (
@@ -487,8 +504,8 @@ export default function Catalog({
                             </ul>
                         </aside>
 
-                        {/* RIGHT SECTION */}
-                        <section className="col-span-12 md:col-span-9 lg:col-span-10">
+                        {/* RIGHT SECTION (Anchor point for scrolling target) */}
+                        <section id="catalog-products-section" className="col-span-12 md:col-span-9 lg:col-span-10 scroll-mt-6">
                             
                             {/* Horizontal Category Pills */}
                             <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">

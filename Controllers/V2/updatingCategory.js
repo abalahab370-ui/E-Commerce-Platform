@@ -1,48 +1,82 @@
-const mongoose = require("mongoose") ;
-const Category = require("../../models/category") ;
-const Product = require("../../models/product") ;
+const mongoose = require("mongoose");
+const Category = require("../../models/category");
+const Product = require("../../models/product");
+const cloudinary = require("../../config/cloudinary");
+
+// Helper function to handle Cloudinary stream uploads from memory buffer
+const uploadFromBuffer = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "categories" },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+    stream.end(buffer);
+  });
+};
 
 const updateCategory = async (req, res) => {
   try {
-    // So Updating the category Would be a better option rather then deleting the category , admin is the only one who can update tho !
-    // first we have to check for the existing of this category : 
     const { categoryId } = req.params;
-    const { name, description } = req.body; // Using req.body for JSON updates
+    const { name, description, isFeatured, featuredTitle, featuredSubtitle, buttonText } = req.body;
 
     const category = await Category.findById(categoryId);
     if (!category) {
-      return res.status(404).json({ message: 'Category Not found' });
+      return res.status(404).json({ message: 'Category not found' });
     }
 
-    // else it exist So we Update it , and there is No need to update products category cuz it use Id and Rel to category So it gonna be updated Also :
+    // Check if a new image buffer exists in memory
+    if (req.file && req.file.buffer) {
+      // 1. Destroy existing category images from Cloudinary
+      const existingImages = Array.isArray(category.bannerImage) 
+        ? category.bannerImage 
+        : category.bannerImage ? [category.bannerImage] : [];
+
+      for (const img of existingImages) {
+        if (img && img.publicId) {
+          await cloudinary.uploader.destroy(img.publicId);
+        }
+      }
+
+      // 2. Upload memory buffer to Cloudinary
+      const uploadResult = await uploadFromBuffer(req.file.buffer);
+
+      // 3. Save the returned secure_url and public_id
+      category.bannerImage = [{
+        url: uploadResult.secure_url,
+        publicId: uploadResult.public_id
+      }];
+    }
+
     if (name) {
       category.name = name;
-      // Clean slug generation (handles special characters and extra spaces)
-      const slug = name
+      category.slug = name
         .toLowerCase()
         .trim()
         .replace(/[^\w\s-]/g, '')
         .replace(/[\s_-]+/g, '-')
         .replace(/^-+|-+$/g, '');
-      category.slug = slug;
     }
 
-    if (description !== undefined) {
-      category.description = description;
-    }
+    if (description !== undefined) category.description = description;
+    if (isFeatured !== undefined) category.isFeatured = isFeatured === 'true' || isFeatured === true;
+    if (featuredTitle !== undefined) category.featuredTitle = featuredTitle;
+    if (featuredSubtitle !== undefined) category.featuredSubtitle = featuredSubtitle;
+    if (buttonText !== undefined) category.buttonText = buttonText;
 
-    // Saving the New Version :
     const result = await category.save();
 
     return res.status(200).json({ 
-      message: 'category updated succesfully', 
+      message: 'Category updated successfully', 
       updatedCategory: result 
     });
 
   } catch (err) {
-    console.error(`Sir we have an error in Updating category : ${err}`);
-    return res.status(500).json({ message: 'Internal Server ERROR' });
+    console.error(`Error updating category: ${err}`);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
-module.exports = updateCategory ;
+module.exports = updateCategory;

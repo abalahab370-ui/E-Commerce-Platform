@@ -11,8 +11,14 @@ export default function CategoryManagement() {
     const [editingCategory, setEditingCategory] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
-        description: ''
+        description: '',
+        isFeatured: false,
+        featuredTitle: '',
+        featuredSubtitle: '',
+        buttonText: 'Découvrir'
     });
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
 
     const loadCategories = useCallback(async () => {
         setLoading(true);
@@ -32,21 +38,47 @@ export default function CategoryManagement() {
     }, [loadCategories]);
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
     };
 
     const resetForm = () => {
         setEditingCategory(null);
-        setFormData({ name: '', description: '' });
+        setFormData({
+            name: '',
+            description: '',
+            isFeatured: false,
+            featuredTitle: '',
+            featuredSubtitle: '',
+            buttonText: 'Découvrir'
+        });
+        setImageFile(null);
+        setImagePreview('');
     };
 
     const handleEditClick = (category) => {
         setEditingCategory(category);
         setFormData({
             name: category.name || '',
-            description: category.description || ''
+            description: category.description || '',
+            isFeatured: !!category.isFeatured,
+            featuredTitle: category.featuredTitle || '',
+            featuredSubtitle: category.featuredSubtitle || '',
+            buttonText: category.buttonText || 'Découvrir'
         });
+        setImagePreview(category.bannerImage || '');
+        setImageFile(null);
     };
 
     const handleSubmit = async (e) => {
@@ -55,10 +87,23 @@ export default function CategoryManagement() {
         setError('');
 
         try {
+            // Build Multipart Form Data for Cloudinary upload support
+            const dataToSend = new FormData();
+            dataToSend.append('name', formData.name);
+            dataToSend.append('description', formData.description);
+            dataToSend.append('isFeatured', formData.isFeatured);
+            dataToSend.append('featuredTitle', formData.featuredTitle);
+            dataToSend.append('featuredSubtitle', formData.featuredSubtitle);
+            dataToSend.append('buttonText', formData.buttonText);
+
+            if (imageFile) {
+                dataToSend.append('image', imageFile);
+            }
+
             if (editingCategory) {
-                await api.updateCategory(editingCategory._id, formData);
+                await api.updateCategory(editingCategory._id, dataToSend);
             } else {
-                await api.createCategory(formData);
+                await api.createCategory(dataToSend);
             }
 
             resetForm();
@@ -82,13 +127,13 @@ export default function CategoryManagement() {
     };
 
     return (
-        <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '24px 16px', fontFamily: 'sans-serif' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 16px', fontFamily: 'sans-serif' }}>
             <div style={{ marginBottom: '24px' }}>
                 <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', margin: 0 }}>
                     Gestion des Catégories
                 </h1>
                 <p style={{ fontSize: '13px', color: '#64748B', margin: '4px 0 0 0' }}>
-                    Structurez le catalogue de votre boutique en organisant vos rayons
+                    Structurez votre catalogue et configurez les bannières de la page d'accueil
                 </p>
             </div>
 
@@ -98,9 +143,9 @@ export default function CategoryManagement() {
                 </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '24px', alignItems: 'start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr', gap: '24px', alignItems: 'start' }}>
                 
-                {/* Category Form (Create / Edit) */}
+                {/* Category Form */}
                 <div style={{ backgroundColor: '#FFF', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '20px' }}>
                     <h2 style={{ fontSize: '16px', fontWeight: '700', color: '#0F172A', marginTop: 0, marginBottom: '16px' }}>
                         {editingCategory ? '📝 Modifier Catégorie' : '➕ Nouvelle Catégorie'}
@@ -109,7 +154,7 @@ export default function CategoryManagement() {
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                         <div>
                             <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>
-                                Nom de la catégorie
+                                Nom de la catégorie *
                             </label>
                             <input 
                                 type="text"
@@ -130,10 +175,79 @@ export default function CategoryManagement() {
                                 name="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
-                                rows="3"
+                                rows="2"
                                 placeholder="Brève description du rayon..."
                                 style={{ width: '100%', padding: '8px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box', resize: 'vertical' }}
                             />
+                        </div>
+
+                        {/* Featured Banner Checkbox */}
+                        <div style={{ backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', padding: '12px', borderRadius: '6px' }}>
+                            <label style={{ display: 'flex', itemsCenter: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>
+                                <input 
+                                    type="checkbox"
+                                    name="isFeatured"
+                                    checked={formData.isFeatured}
+                                    onChange={handleInputChange}
+                                    style={{ width: '16px', height: '16px', accentColor: '#10B981' }}
+                                />
+                                Afficher dans la bannière Hero (Accueil)
+                            </label>
+
+                            {formData.isFeatured && (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#64748B', marginBottom: '2px' }}>Titre de la bannière</label>
+                                        <input 
+                                            type="text" 
+                                            name="featuredTitle" 
+                                            value={formData.featuredTitle} 
+                                            onChange={handleInputChange} 
+                                            placeholder="ex: Design Minimaliste" 
+                                            style={{ width: '100%', padding: '6px', border: '1px solid #CBD5E1', borderRadius: '4px', fontSize: '12px', boxSizing: 'border-box' }}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#64748B', marginBottom: '2px' }}>Sous-titre de la bannière</label>
+                                        <input 
+                                            type="text" 
+                                            name="featuredSubtitle" 
+                                            value={formData.featuredSubtitle} 
+                                            onChange={handleInputChange} 
+                                            placeholder="ex: Les essentiels de la saison" 
+                                            style={{ width: '100%', padding: '6px', border: '1px solid #CBD5E1', borderRadius: '4px', fontSize: '12px', boxSizing: 'border-box' }}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#64748B', marginBottom: '2px' }}>Texte du bouton</label>
+                                        <input 
+                                            type="text" 
+                                            name="buttonText" 
+                                            value={formData.buttonText} 
+                                            onChange={handleInputChange} 
+                                            placeholder="ex: Découvrir" 
+                                            style={{ width: '100%', padding: '6px', border: '1px solid #CBD5E1', borderRadius: '4px', fontSize: '12px', boxSizing: 'border-box' }}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#64748B', marginBottom: '2px' }}>Image de bannière</label>
+                                        <input 
+                                            type="file" 
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            style={{ fontSize: '11px', width: '100%' }}
+                                        />
+                                        {imagePreview && (
+                                            <div style={{ marginTop: '8px', width: '100%', height: '90px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #E2E8F0' }}>
+                                                <img src={imagePreview} alt="Aperçu" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
@@ -172,16 +286,37 @@ export default function CategoryManagement() {
                             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
                                 <thead>
                                     <tr style={{ borderBottom: '2px solid #E2E8F0', color: '#64748B' }}>
+                                        <th style={{ padding: '10px' }}>Image</th>
                                         <th style={{ padding: '10px' }}>Nom</th>
-                                        <th style={{ padding: '10px' }}>Description</th>
+                                        <th style={{ padding: '10px' }}>Vedette</th>
                                         <th style={{ padding: '10px', textAlign: 'right' }}>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {categories.map((cat) => (
                                         <tr key={cat._id} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                                            <td style={{ padding: '10px', fontWeight: '700', color: '#0F172A' }}>{cat.name}</td>
-                                            <td style={{ padding: '10px', color: '#64748B' }}>{cat.description || '—'}</td>
+                                            <td style={{ padding: '10px' }}>
+                                                {cat.bannerImage ? (
+                                                    <img src={cat.bannerImage} alt={cat.name} style={{ width: '40px', height: '28px', borderRadius: '4px', objectFit: 'cover' }} />
+                                                ) : (
+                                                    <span style={{ fontSize: '11px', color: '#CBD5E1' }}>Pas d'image</span>
+                                                )}
+                                            </td>
+                                            <td style={{ padding: '10px', fontWeight: '700', color: '#0F172A' }}>
+                                                {cat.name}
+                                                {cat.description && (
+                                                    <span style={{ display: 'block', fontSize: '11px', fontWeight: '400', color: '#64748B' }}>{cat.description}</span>
+                                                )}
+                                            </td>
+                                            <td style={{ padding: '10px' }}>
+                                                {cat.isFeatured ? (
+                                                    <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '12px', fontSize: '10px', fontWeight: '800', backgroundColor: '#D1FAE5', color: '#065F46' }}>
+                                                        ⭐ Hero Banner
+                                                    </span>
+                                                ) : (
+                                                    <span style={{ color: '#CBD5E1' }}>—</span>
+                                                )}
+                                            </td>
                                             <td style={{ padding: '10px', textAlign: 'right' }}>
                                                 <button
                                                     onClick={() => handleEditClick(cat)}

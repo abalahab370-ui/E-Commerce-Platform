@@ -5,6 +5,7 @@ const {verifyRoles , ROLES } = require("../../middleware/verifyRoles") ;
 const deleteCategory = require("../../Controllers/V2/deleteCategoryController") ;
 const updateCategory = require("../../Controllers/V2/updatingCategory") ;
 const verfieJWT = require("../../Controllers/V2/verfieJWT") ;
+const multer = require("../../middleware/multer") ;
 
 // now we will add the routes for the category management :
 // we will add the route to get all the categories :
@@ -14,11 +15,11 @@ router.get( '/' , getAllCategories ) ;
 
 // admin only can creat a new category :
 
-router.post( '/' , verfieJWT ,verifyRoles(ROLES.admin) , createCategory ) ;
+router.post( '/' , verfieJWT ,verifyRoles(ROLES.admin) ,multer.single('image') ,  createCategory ) ;
 
-router.patch( '/:categoryId' , verfieJWT ,verifyRoles(ROLES.admin) , updateCategory ) ;
+router.patch( '/:categoryId' , verfieJWT ,verifyRoles(ROLES.admin) , multer.single('image') ,updateCategory ) ;
 
-router.delete( '/:categoryId' , verfieJWT , verifyRoles(ROLES.admin) , deleteCategory) ;
+router.delete( '/:categoryId' , verfieJWT , verifyRoles(ROLES.admin) , multer.single('image') ,deleteCategory) ;
 
 
 module.exports = router ;
