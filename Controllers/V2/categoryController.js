@@ -1,6 +1,20 @@
 const Category = require('../../models/category');
 const cloudinary = require("../../config/cloudinary");
 
+// Helper to handle Cloudinary stream uploads from a memory buffer
+const uploadFromBuffer = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'storedz/categories' },
+      (error, result) => {
+        if (result) resolve(result);
+        else reject(error);
+      }
+    );
+    stream.end(buffer);
+  });
+};
+
 // @desc Create Category (Admin Only)
 // @route POST /api/v1/categories
 const createCategory = async (req, res) => {
@@ -14,24 +28,21 @@ const createCategory = async (req, res) => {
             buttonText 
          } = req.body;
 
-        if (!name) {
+        if (!name || !name.trim()) {
             return res.status(400).json({ message: 'Category name is required' });
         }
 
         // Clean slug formatting
         const slug = name.toLowerCase().trim().replace(/\s+/g, '-');
 
-        // Handle image upload to Cloudinary if Multer captured a file
+        // Handle image upload to Cloudinary if Multer captured a file in memory
         let bannerImage = [];
-        if (req.file) {
-            const uploadResult = await cloudinary.uploader.upload(req.file.buffer, {
-                folder: 'storedz/categories',
-            });
+        if (req.file && req.file.buffer) {
+            const uploadResult = await uploadFromBuffer(req.file.buffer);
             bannerImage = [{
-                url : uploadResult.secure_url ,
-                publicId : uploadResult.public_id
-            }]
-
+                url: uploadResult.secure_url,
+                publicId: uploadResult.public_id
+            }];
         }
 
         // Create new category document

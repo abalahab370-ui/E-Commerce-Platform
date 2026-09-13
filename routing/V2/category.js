@@ -19,7 +19,7 @@ router.post( '/' , verfieJWT ,verifyRoles(ROLES.admin) ,multer.single('image') ,
 
 router.patch( '/:categoryId' , verfieJWT ,verifyRoles(ROLES.admin) , multer.single('image') ,updateCategory ) ;
 
-router.delete( '/:categoryId' , verfieJWT , verifyRoles(ROLES.admin) , multer.single('image') ,deleteCategory) ;
+router.delete( '/:categoryId' , verfieJWT , verifyRoles(ROLES.admin) ,deleteCategory) ;
 
 
 module.exports = router ;

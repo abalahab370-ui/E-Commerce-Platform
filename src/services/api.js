@@ -105,15 +105,15 @@ export const api = {
     logout: () => 
         apiFetch('/auth/logout', { method: 'POST' }),
 
-    // --- CATEGORIES ---
+// --- CATEGORIES ---
     getCategories: () => 
         apiFetch('/categories'),
 
     createCategory: (categoryData) => 
-        apiFetch('/categories', { method: 'POST', body: categoryData }),
+        apiFetch('/categories', { method: 'POST', body: categoryData, isFormData: true }),
 
     updateCategory: (id, categoryData) => 
-        apiFetch(`/categories/${id}`, { method: 'PATCH', body: categoryData }),
+        apiFetch(`/categories/${id}`, { method: 'PATCH', body: categoryData, isFormData: true }),
 
     deleteCategory: (id) => 
         apiFetch(`/categories/${id}`, { method: 'DELETE' }),
