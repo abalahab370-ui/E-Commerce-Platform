@@ -1,41 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
+
 export default function StoreNavbar({ onGoToAdmin, onResetStore, onGoToCheckout }) {
-    const [isCartOpen, setIsCartOpen] = useState(false);
-
-    const handleCheckout = () => {
-        setIsCartOpen(false); // Close cart drawer
-        if (onGoToCheckout) {
-            onGoToCheckout(); // Switch view to Checkout
-        }
-    };
-
     return (
-        <nav>
-            {/* Navbar Header ... */}
+        <header className="bg-[#0B0D12] border-b border-[#1A1D26] sticky top-0 z-40 px-4 sm:px-8 py-3">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+                
+                {/* Brand Logo */}
+                <div 
+                    onClick={onResetStore}
+                    className="font-serif text-xl font-bold tracking-tight text-white cursor-pointer select-none"
+                >
+                    Store<span className="text-[#10B981] font-sans">DZ</span>
+                </div>
 
-            {/* CART DRAWER PANEL */}
-            {isCartOpen && (
-                <div className="cart-drawer">
-                    {/* Cart Items List */}
+                {/* Right Actions */}
+                <div className="flex items-center gap-4 text-xs font-semibold">
+                    <button 
+                        onClick={onGoToAdmin}
+                        className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+                    >
+                        Admin
+                    </button>
+
+                    <div className="text-gray-600">|</div>
+
+                    <div className="text-gray-400 flex items-center gap-2">
+                        <span className="cursor-pointer hover:text-white">EN</span>
+                        <span>|</span>
+                        <span className="cursor-pointer hover:text-white">FR</span>
+                        <span>|</span>
+                        <span className="cursor-pointer hover:text-white">AR</span>
+                    </div>
 
                     <button 
-                        type="button" 
-                        onClick={handleCheckout}
-                        style={{
-                            width: '100%',
-                            padding: '12px',
-                            backgroundColor: '#10B981',
-                            color: '#FFF',
-                            border: 'none',
-                            borderRadius: '6px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer'
-                        }}
+                        onClick={onGoToCheckout}
+                        className="bg-[#10B981] hover:bg-[#059669] text-black font-extrabold px-4 py-2 rounded-full transition-all flex items-center gap-2 cursor-pointer"
                     >
-                        Valider la Commande
+                        Cart
                     </button>
                 </div>
-            )}
-        </nav>
+
+            </div>
+        </header>
     );
 }

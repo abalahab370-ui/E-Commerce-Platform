@@ -1,20 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STOREDZ // High-Performance COD Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>STOREDZ E-Commerce Platform</title>
+    
+    <!-- Google Fonts: Editorial Serif + Modern Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                    },
+                    colors: {
+                        surface: {
+                            900: '#0B0D12',
+                            800: '#14171F',
+                            700: '#1F2430',
+                        },
+                        accent: {
+                            lime: '#10B981',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #0B0D12;
+        }
     </style>
 </head>
-<body class="bg-[#F4F7F4] text-slate-800 min-h-screen w-full relative overflow-x-hidden flex flex-col">
+<body class="bg-[#0B0D12] text-slate-100 min-h-screen w-full relative overflow-x-hidden flex flex-col selection:bg-[#10B981] selection:text-black">
     <!-- Ambient Background Blur Glow -->
-    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[350px] bg-emerald-500/10 blur-[140px] rounded-full pointer-events-none z-0"></div>
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-full max-w-[900px] h-[350px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
 
     <div id="root" class="relative z-10 flex flex-col min-h-screen"></div>
     <script type="module" src="/src/main.jsx"></script>

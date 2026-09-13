@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Footer from '../../components/Footer';
 import { api } from '../../services/api';
+import BentoHero from '../../components/BentoHero';
 
-export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckout }) {
+export default function Catalog({ onSelectProduct, onGoToCheckout, onCartCheckout }) {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     
@@ -61,7 +63,7 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
         setLoading(true);
         setError('');
         try {
-            const queryParams = { page, limit: 10 };
+            const queryParams = { page, limit: 12 };
 
             if (debouncedSearch.trim()) queryParams.search = debouncedSearch.trim();
             if (selectedCategorySlug !== 'ALL') queryParams.category = selectedCategorySlug;
@@ -83,23 +85,21 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
 
     // Open Product Detail View
     const handleOpenProduct = (product) => {
-    setActiveModalProduct(product);
-    setSelectedImageIndex(0);
+        setActiveModalProduct(product);
+        setSelectedImageIndex(0);
 
-    // Extract unique colors from variants array, falling back to top-level colors array
-    const availableColors = product.variants && product.variants.length > 0
-        ? [...new Set(product.variants.map(v => v.color).filter(Boolean))]
-        : (product.colors || []);
+        const availableColors = product.variants && product.variants.length > 0
+            ? [...new Set(product.variants.map(v => v.color).filter(Boolean))]
+            : (product.colors || []);
 
-    // Extract unique sizes from variants array, falling back to top-level sizes array
-    const availableSizes = product.variants && product.variants.length > 0
-        ? [...new Set(product.variants.map(v => v.size).filter(Boolean))]
-        : (product.sizes || []);
+        const availableSizes = product.variants && product.variants.length > 0
+            ? [...new Set(product.variants.map(v => v.size).filter(Boolean))]
+            : (product.sizes || []);
 
-    setSelectedColor(availableColors[0] || '');
-    setSelectedSize(availableSizes[0] || '');
-    setSelectedQuantity(1);
-};
+        setSelectedColor(availableColors[0] || '');
+        setSelectedSize(availableSizes[0] || '');
+        setSelectedQuantity(1);
+    };
 
     // Add to Cart
     const handleAddToCart = (product, color, size, qty = 1, openCart = true) => {
@@ -131,37 +131,32 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
         }
     };
 
-    // "Acheter maintenant" (Buy Now)
+    // Buy Now Handler
     const handleBuyNow = (product, color, size, qty) => {
-    // 1. Locate matching variant ID from selection
-    const selectedVariant = product?.variants?.find(
-        v => v.color === color && v.size === size
-    );
-    const variantId = selectedVariant?._id || null;
+        const selectedVariant = product?.variants?.find(
+            v => v.color === color && v.size === size
+        );
+        const variantId = selectedVariant?._id || null;
 
-    // 2. Build the order item object
-    const newItem = {
-        productId: product._id,
-        name: product.name,
-        price: product.price,
-        quantity: qty,
-        variantId,
-        color,
-        size,
-        image: product.images?.[0]?.url || product.imageUrl
-    };
+        const newItem = {
+            productId: product._id,
+            name: product.name,
+            price: product.price,
+            quantity: qty,
+            variantId,
+            color,
+            size,
+            image: product.images?.[0]?.url || product.imageUrl
+        };
 
-    setActiveModalProduct(null);
+        setActiveModalProduct(null);
 
-    // 3. Forward full selection details to checkout handlers
-    if (onSelectProduct) {
-        // Pass productId AND selection details to parent
-        onSelectProduct(product._id, { variantId, color, size, qty });
-    } else if (onCartCheckout) {
-        // Pass the updated cart directly so state isn't stale
-        const currentCart = JSON.parse(localStorage.getItem('storedz_cart') || '[]');
-        onCartCheckout([...currentCart, newItem]);
-    }
+        if (onSelectProduct) {
+            onSelectProduct(product._id, { variantId, color, size, qty });
+        } else if (onCartCheckout) {
+            const currentCart = JSON.parse(localStorage.getItem('storedz_cart') || '[]');
+            onCartCheckout([...currentCart, newItem]);
+        }
     };
 
     const updateQuantity = (itemKey, delta) => {
@@ -181,7 +176,6 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
     const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-    // Extract images list safely
     const getProductImages = (product) => {
         if (!product) return [];
         if (Array.isArray(product.images) && product.images.length > 0) {
@@ -191,16 +185,6 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
         return ['/placeholder.png'];
     };
 
-    const handleProceedToCheckout = () => {
-        setIsCartOpen(false);
-        if (onGoToCheckout) {
-            onGoToCheckout();
-        } else if (onCartCheckout) {
-            onCartCheckout(cart);
-        }
-    };
-    
-    // Calculate variant options for the active modal
     const modalColors = activeModalProduct?.variants?.length > 0
         ? [...new Set(activeModalProduct.variants.map(v => v.color).filter(Boolean))]
         : (activeModalProduct?.colors || []);
@@ -209,554 +193,461 @@ export default function Catalog({ onSelectProduct, onGoToCheckout ,onCartCheckou
         ? [...new Set(activeModalProduct.variants.map(v => v.size).filter(Boolean))]
         : (activeModalProduct?.sizes || []);
 
-
     return (
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        <div className="bg-[#0B0D12] text-gray-100 min-h-screen pb-16 font-sans selection:bg-[#10B981] selection:text-black">
             
-            {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #E2E8F0' }}>
-                <h1 style={{ fontSize: '22px', fontWeight: '900', color: '#0F172A', margin: 0, cursor: 'pointer' }} onClick={() => setActiveModalProduct(null)}>
-                    STORE<span style={{ color: '#10B981' }}>DZ</span>
-                </h1>
-                
-                <button 
-                    onClick={() => setIsCartOpen(true)}
-                    style={{
-                        padding: '10px 18px',
-                        backgroundColor: '#0F172A',
-                        color: '#FFF',
-                        border: 'none',
-                        borderRadius: '30px',
-                        fontWeight: '700',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                    }}
-                >
-                    🛒 Mon Panier
-                    {cartCount > 0 && (
-                        <span style={{ backgroundColor: '#10B981', color: '#FFF', borderRadius: '50%', padding: '2px 7px', fontSize: '11px', fontWeight: '800' }}>
-                            {cartCount}
-                        </span>
-                    )}
-                </button>
-            </div>
+            {/* Bento Grid Hero Banner */}
+            {!activeModalProduct && <BentoHero />}
 
-            {/* FULL PRODUCT DETAIL VIEW OVERLAY */}
-            {activeModalProduct ? (
-                <div style={{ backgroundColor: '#FFF', borderRadius: '16px', padding: '24px', border: '1px solid #E2E8F0', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', marginTop: '16px' }}>
-                    
-                    {/* Back button */}
-                    <button 
-                        onClick={() => setActiveModalProduct(null)}
-                        style={{ border: 'none', background: '#F1F5F9', padding: '8px 16px', borderRadius: '20px', fontSize: '13px', fontWeight: '700', color: '#475569', cursor: 'pointer', marginBottom: '24px' }}
-                    >
-                        ← Retour aux produits
-                    </button>
-
-                    {(() => {
-                        const images = getProductImages(activeModalProduct);
-                        return (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '36px' }}>
-                                
-                                {/* LEFT GALLERY: Thumbnails + Main Image */}
-                                <div style={{ display: 'flex', gap: '16px' }}>
-                                    
-                                    {/* Thumbnails vertical list */}
-                                    {images.length > 1 && (
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '480px', overflowY: 'auto' }}>
-                                            {images.map((img, idx) => (
-                                                <div 
-                                                    key={idx}
-                                                    onClick={() => setSelectedImageIndex(idx)}
-                                                    style={{
-                                                        width: '64px',
-                                                        height: '64px',
-                                                        borderRadius: '8px',
-                                                        border: selectedImageIndex === idx ? '2px solid #6366F1' : '1px solid #E2E8F0',
-                                                        overflow: 'hidden',
-                                                        cursor: 'pointer',
-                                                        flexShrink: 0
-                                                    }}
-                                                >
-                                                    <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Main Image View */}
-                                    <div style={{ position: 'relative', flex: 1, backgroundColor: '#F8FAFC', borderRadius: '12px', height: '480px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid #F1F5F9' }}>
-                                        <img 
-                                            src={images[selectedImageIndex] || images[0]} 
-                                            alt={activeModalProduct.name} 
-                                            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', padding: '16px' }} 
-                                        />
-
-                                        {/* Prev / Next Arrows */}
-                                        {images.length > 1 && (
-                                            <>
-                                                <button 
-                                                    onClick={() => setSelectedImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))}
-                                                    style={{ position: 'absolute', left: '12px', width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', border: '1px solid #CBD5E1', cursor: 'pointer', fontWeight: 'bold' }}
-                                                >
-                                                    ‹
-                                                </button>
-                                                <button 
-                                                    onClick={() => setSelectedImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))}
-                                                    style={{ position: 'absolute', right: '12px', width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', border: '1px solid #CBD5E1', cursor: 'pointer', fontWeight: 'bold' }}
-                                                >
-                                                    ›
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* RIGHT PANEL: Info & Actions */}
-                                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                    <div>
-                                        {/* Vendor / Brand */}
-                                        <div style={{ fontSize: '13px', fontWeight: '700', color: '#64748B', textTransform: 'uppercase', marginBottom: '6px' }}>
-                                            {activeModalProduct.category?.name || 'STORE DZ'}
-                                        </div>
-
-                                        {/* Product Title */}
-                                        <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', margin: '0 0 12px 0', lineHeight: 1.2 }}>
-                                            {activeModalProduct.name}
-                                        </h1>
-
-                                        {/* Stock Tag */}
-                                        <div style={{ display: 'inline-block', backgroundColor: '#FEF2F2', color: '#EF4444', fontSize: '11px', fontWeight: '700', padding: '4px 10px', borderRadius: '12px', marginBottom: '16px' }}>
-                                            En Stock • Paiement à la livraison
-                                        </div>
-
-                                        {/* Price */}
-                                        <div style={{ fontSize: '24px', fontWeight: '900', color: '#0F172A', marginBottom: '24px' }}>
-                                            {activeModalProduct.price} <span style={{ fontSize: '14px', color: '#64748B', fontWeight: '600' }}>DZD</span>
-                                        </div>
-                                        {/* RIGHT COLUMN: Details & Actions */}
-<div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-    <div>
-        <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#0F172A', margin: 0 }}>
-            {activeModalProduct.name}
-        </h2>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 my-4">
+    <div className="relative">
+        <span className="absolute inset-y-0 left-4 flex items-center text-gray-400 text-sm">🔍</span>
+        <input 
+            type="text" 
+            value={searchTerm || ''}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search products, minimalist essentials, tech..." 
+            className="w-full bg-[#161821] border border-[#222634] text-sm text-gray-200 placeholder-gray-500 rounded-2xl py-3 pl-11 pr-4 focus:outline-none focus:border-[#10B981] transition-colors shadow-sm"
+        />
     </div>
-
-
-    {/* COULEURS */}
-    {modalColors.length > 0 && (
-        <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '6px' }}>
-                Couleur: <span style={{ color: '#0F172A' }}>{selectedColor}</span>
-            </label>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {modalColors.map((color) => (
-                    <button
-                        key={color}
-                        type="button"
-                        onClick={() => setSelectedColor(color)}
-                        style={{
-                            padding: '6px 14px',
-                            borderRadius: '6px',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            border: selectedColor === color ? '2px solid #10B981' : '1px solid #CBD5E1',
-                            backgroundColor: selectedColor === color ? '#ECFDF5' : '#FFF',
-                            color: selectedColor === color ? '#047857' : '#334155',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {color}
-                    </button>
-                ))}
-            </div>
-        </div>
-    )}
-
-    {/* TAILLES */}
-    {modalSizes.length > 0 && (
-        <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '6px' }}>
-                Taille: <span style={{ color: '#0F172A' }}>{selectedSize}</span>
-            </label>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {modalSizes.map((size) => (
-                    <button
-                        key={size}
-                        type="button"
-                        onClick={() => setSelectedSize(size)}
-                        style={{
-                            padding: '6px 14px',
-                            borderRadius: '6px',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            border: selectedSize === size ? '2px solid #10B981' : '1px solid #CBD5E1',
-                            backgroundColor: selectedSize === size ? '#ECFDF5' : '#FFF',
-                            color: selectedSize === size ? '#047857' : '#334155',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {size}
-                    </button>
-                ))}
-            </div>
-        </div>
-    )}   
 </div>
-                                        {/* Colors Selection */}
-                                        {activeModalProduct.colors?.length > 0 && (
-                                            <div style={{ marginBottom: '20px' }}>
-                                                <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '8px' }}>
-                                                    Couleur: <span style={{ fontWeight: '600', color: '#64748B' }}>{selectedColor}</span>
-                                                </label>
-                                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                                    {activeModalProduct.colors.map(c => (
-                                                        <button 
-                                                            key={c} 
-                                                            onClick={() => setSelectedColor(c)} 
-                                                            style={{ 
-                                                                padding: '8px 16px', 
-                                                                borderRadius: '20px', 
-                                                                border: selectedColor === c ? '2px solid #0F172A' : '1px solid #CBD5E1', 
-                                                                backgroundColor: selectedColor === c ? '#0F172A' : '#FFF',
-                                                                color: selectedColor === c ? '#FFF' : '#0F172A',
-                                                                fontSize: '12px', 
-                                                                fontWeight: '700', 
-                                                                cursor: 'pointer' 
-                                                            }}
-                                                        >
-                                                            {c}
-                                                        </button>
-                                                    ))}
-                                                </div>
+
+            <main className="max-w-7xl mx-auto px-4 sm:px-6">
+                
+                {/* FULL PRODUCT DETAIL VIEW OVERLAY */}
+                {activeModalProduct ? (
+                    <div className="bg-[#161821] border border-[#222634] rounded-3xl p-6 sm:p-10 my-8 shadow-2xl">
+                        
+                        <button 
+                            onClick={() => setActiveModalProduct(null)}
+                            className="bg-[#222634] hover:bg-[#2A2F42] text-gray-300 font-bold text-xs px-5 py-2.5 rounded-full mb-8 transition-colors flex items-center gap-2"
+                        >
+                            ← Back to Products
+                        </button>
+
+                        {(() => {
+                            const images = getProductImages(activeModalProduct);
+                            return (
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                                    
+                                    {/* Gallery */}
+                                    <div className="flex gap-4">
+                                        {images.length > 1 && (
+                                            <div className="flex flex-col gap-3 overflow-y-auto max-h-[480px]">
+                                                {images.map((img, idx) => (
+                                                    <button 
+                                                        key={idx}
+                                                        onClick={() => setSelectedImageIndex(idx)}
+                                                        className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
+                                                            selectedImageIndex === idx ? 'border-[#10B981]' : 'border-[#222634] bg-white/5'
+                                                        }`}
+                                                    >
+                                                        <img src={img} alt="" className="w-full h-full object-cover" />
+                                                    </button>
+                                                ))}
                                             </div>
                                         )}
 
-                                        {/* Sizes Selection */}
-                                        {activeModalProduct.sizes?.length > 0 && (
-                                            <div style={{ marginBottom: '20px' }}>
-                                                <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '8px' }}>
-                                                    Taille: <span style={{ fontWeight: '600', color: '#64748B' }}>{selectedSize}</span>
-                                                </label>
-                                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                                    {activeModalProduct.sizes.map(s => (
-                                                        <button 
-                                                            key={s} 
-                                                            onClick={() => setSelectedSize(s)} 
-                                                            style={{ 
-                                                                minWidth: '44px',
-                                                                padding: '8px 12px', 
-                                                                borderRadius: '20px', 
-                                                                border: selectedSize === s ? '2px solid #0F172A' : '1px solid #CBD5E1', 
-                                                                backgroundColor: selectedSize === s ? '#0F172A' : '#FFF',
-                                                                color: selectedSize === s ? '#FFF' : '#0F172A',
-                                                                fontSize: '12px', 
-                                                                fontWeight: '700', 
-                                                                cursor: 'pointer' 
-                                                            }}
-                                                        >
-                                                            {s}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
+                                        <div className="relative flex-1 bg-white rounded-2xl h-[440px] flex items-center justify-center p-6 border border-[#222634] overflow-hidden">
+                                            <img 
+                                                src={images[selectedImageIndex] || images[0]} 
+                                                alt={activeModalProduct.name} 
+                                                className="max-w-full max-h-full object-contain" 
+                                            />
 
-                                        {/* Quantity Selector */}
-                                        <div style={{ marginBottom: '24px' }}>
-                                            <label style={{ fontSize: '12px', fontWeight: '800', color: '#334155', display: 'block', marginBottom: '8px' }}>Quantité</label>
-                                            <div style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #CBD5E1', borderRadius: '30px', padding: '4px 12px' }}>
-                                                <button 
-                                                    onClick={() => setSelectedQuantity(q => Math.max(1, q - 1))}
-                                                    style={{ border: 'none', background: 'none', fontSize: '16px', fontWeight: '800', cursor: 'pointer', padding: '4px 8px' }}
-                                                >
-                                                    -
-                                                </button>
-                                                <span style={{ padding: '0 12px', fontSize: '14px', fontWeight: '800', color: '#0F172A' }}>{selectedQuantity}</span>
-                                                <button 
-                                                    onClick={() => setSelectedQuantity(q => q + 1)}
-                                                    style={{ border: 'none', background: 'none', fontSize: '16px', fontWeight: '800', cursor: 'pointer', padding: '4px 8px' }}
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
+                                            {images.length > 1 && (
+                                                <>
+                                                    <button 
+                                                        onClick={() => setSelectedImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))}
+                                                        className="absolute left-3 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center font-bold hover:bg-black transition-colors"
+                                                    >
+                                                        ‹
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => setSelectedImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))}
+                                                        className="absolute right-3 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center font-bold hover:bg-black transition-colors"
+                                                    >
+                                                        ›
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
 
-                                    {/* Action Buttons */}
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                        <button 
-                                            onClick={() => handleAddToCart(activeModalProduct, selectedColor, selectedSize, selectedQuantity, true)}
-                                            style={{
-                                                width: '100%',
-                                                padding: '16px',
-                                                backgroundColor: '#6366F1', // Modern shop purple/blue
-                                                color: '#FFF',
-                                                border: 'none',
-                                                borderRadius: '30px',
-                                                fontWeight: '800',
-                                                fontSize: '15px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            Ajouter au panier
-                                        </button>
+                                    {/* Details Panel */}
+                                    <div className="flex flex-col justify-between">
+                                        <div>
+                                            <span className="text-xs font-black uppercase tracking-wider text-[#10B981] mb-2 block">
+                                                {activeModalProduct.category?.name || 'STORE DZ'}
+                                            </span>
 
-                                        <button 
-                                            onClick={() => handleBuyNow(activeModalProduct, selectedColor, selectedSize, selectedQuantity)}
-                                            style={{
-                                                width: '100%',
-                                                padding: '16px',
-                                                backgroundColor: '#0F172A',
-                                                color: '#FFF',
-                                                border: 'none',
-                                                borderRadius: '30px',
-                                                fontWeight: '800',
-                                                fontSize: '15px',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            Acheter maintenant
-                                        </button>
+                                            <h1 className="font-serif text-3xl font-bold text-white mb-3 leading-tight">
+                                                {activeModalProduct.name}
+                                            </h1>
 
-                                        {/* Description */}
-                                        {activeModalProduct.description && (
-                                            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #E2E8F0' }}>
-                                                <h3 style={{ fontSize: '13px', fontWeight: '800', color: '#0F172A', margin: '0 0 8px 0' }}>Description</h3>
-                                                <p style={{ fontSize: '13px', color: '#64748B', lineHeight: '1.6', margin: 0 }}>
-                                                    {activeModalProduct.description}
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })()}
-                </div>
-            ) : (
-                /* MAIN CATALOG GRID VIEW */
-                <>
-                    {/* Banner */}
-                    <div style={{ backgroundColor: '#0F172A', color: '#FFF', borderRadius: '12px', padding: '28px 20px', marginBottom: '24px', textAlign: 'center' }}>
-                        <h2 style={{ fontSize: '26px', fontWeight: '900', margin: 0 }}>Paiement à la Livraison 🇩🇿</h2>
-                        <p style={{ fontSize: '14px', color: '#94A3B8', marginTop: '8px' }}>Commandez en quelques clics et payez lors de la réception chez vous.</p>
-                    </div>
-
-                    {/* Search Bar & Categories */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-                        <div style={{ position: 'relative' }}>
-                            <input 
-                                type="text"
-                                placeholder=" Rechercher un produit..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '14px', boxSizing: 'border-box' }}
-                            />
-                            {searchTerm && (
-                                <button 
-                                    onClick={() => setSearchTerm('')} 
-                                    style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: '#64748B' }}
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-                            <button
-                                onClick={() => { setSelectedCategorySlug('ALL'); setPage(1); }}
-                                style={{
-                                    padding: '8px 16px',
-                                    borderRadius: '20px',
-                                    border: 'none',
-                                    fontSize: '12px',
-                                    fontWeight: '700',
-                                    cursor: 'pointer',
-                                    backgroundColor: selectedCategorySlug === 'ALL' ? '#10B981' : '#F1F5F9',
-                                    color: selectedCategorySlug === 'ALL' ? '#FFF' : '#475569',
-                                    whiteSpace: 'nowrap'
-                                }}
-                            >
-                                Tous les articles
-                            </button>
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat._id}
-                                    onClick={() => { setSelectedCategorySlug(cat.slug); setPage(1); }}
-                                    style={{
-                                        padding: '8px 16px',
-                                        borderRadius: '20px',
-                                        border: 'none',
-                                        fontSize: '12px',
-                                        fontWeight: '700',
-                                        cursor: 'pointer',
-                                        backgroundColor: selectedCategorySlug === cat.slug ? '#10B981' : '#F1F5F9',
-                                        color: selectedCategorySlug === cat.slug ? '#FFF' : '#475569',
-                                        whiteSpace: 'nowrap'
-                                    }}
-                                >
-                                    {cat.name}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {error && (
-                        <div style={{ padding: '12px', backgroundColor: '#FEE2E2', color: '#DC2626', borderRadius: '8px', fontSize: '13px', marginBottom: '24px' }}>
-                            {error}
-                        </div>
-                    )}
-
-                    {/* Products Grid */}
-                    {loading ? (
-                        <div style={{ textAlign: 'center', padding: '60px', color: '#64748B', fontSize: '14px' }}>Chargement des produits...</div>
-                    ) : products.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '60px', backgroundColor: '#FFF', borderRadius: '8px', border: '1px solid #E2E8F0', color: '#94A3B8' }}>
-                            Aucun produit trouvé.
-                        </div>
-                    ) : (
-                        <>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px' }}>
-                                {products.map((product) => {
-                                    const productImage = product.images?.[0]?.url || product.imageUrl || (typeof product.images?.[0] === 'string' ? product.images[0] : null);
-
-                                    return (
-                                        <div 
-                                            key={product._id} 
-                                            onClick={() => handleOpenProduct(product)}
-                                            style={{ backgroundColor: '#FFF', border: '1px solid #E2E8F0', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', transition: 'transform 0.2s' }}
-                                        >
-                                            <div style={{ height: '200px', backgroundColor: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-                                                {productImage ? (
-                                                    <img src={productImage} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                ) : (
-                                                    <span style={{ fontSize: '12px', color: '#94A3B8' }}>Pas d'image</span>
-                                                )}
+                                            <div className="inline-block bg-[#10B981]/10 border border-[#10B981]/20 text-[#10B981] text-xs font-bold px-3 py-1 rounded-full mb-6">
+                                                In Stock • Cash on Delivery
                                             </div>
 
-                                            <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                <div>
-                                                    <span style={{ fontSize: '10px', fontWeight: '800', color: '#10B981', textTransform: 'uppercase' }}>
-                                                        {product.category?.name || 'STORE'}
-                                                    </span>
-                                                    <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#0F172A', margin: '4px 0 8px 0' }}>{product.name}</h3>
-                                                </div>
+                                            <div className="text-3xl font-black text-white mb-6">
+                                                {activeModalProduct.price} <span className="text-sm font-semibold text-gray-400">DZD</span>
+                                            </div>
 
-                                                <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                                    <div style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
-                                                        {product.price} <span style={{ fontSize: '11px', color: '#64748B' }}>DZD</span>
+                                            {/* Colors Selection */}
+                                            {modalColors.length > 0 && (
+                                                <div className="mb-6">
+                                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2">
+                                                        Color: <span className="text-white">{selectedColor}</span>
+                                                    </label>
+                                                    <div className="flex gap-2 flex-wrap">
+                                                        {modalColors.map((color) => (
+                                                            <button
+                                                                key={color}
+                                                                onClick={() => setSelectedColor(color)}
+                                                                className={`px-4 py-2 rounded-xl text-xs font-extrabold border transition-all ${
+                                                                    selectedColor === color 
+                                                                        ? 'border-[#10B981] bg-[#10B981] text-black' 
+                                                                        : 'border-[#222634] bg-[#0D0E14] text-gray-300 hover:border-gray-500'
+                                                                }`}
+                                                            >
+                                                                {color}
+                                                            </button>
+                                                        ))}
                                                     </div>
+                                                </div>
+                                            )}
 
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleOpenProduct(product);
-                                                        }}
-                                                        style={{ padding: '10px', backgroundColor: '#0F172A', color: '#FFF', border: 'none', borderRadius: '20px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}
+                                            {/* Sizes Selection */}
+                                            {modalSizes.length > 0 && (
+                                                <div className="mb-6">
+                                                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2">
+                                                        Size: <span className="text-white">{selectedSize}</span>
+                                                    </label>
+                                                    <div className="flex gap-2 flex-wrap">
+                                                        {modalSizes.map((size) => (
+                                                            <button
+                                                                key={size}
+                                                                onClick={() => setSelectedSize(size)}
+                                                                className={`px-4 py-2 rounded-xl text-xs font-extrabold border transition-all ${
+                                                                    selectedSize === size 
+                                                                        ? 'border-[#10B981] bg-[#10B981] text-black' 
+                                                                        : 'border-[#222634] bg-[#0D0E14] text-gray-300 hover:border-gray-500'
+                                                                }`}
+                                                            >
+                                                                {size}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Quantity */}
+                                            <div className="mb-8">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2">Quantity</label>
+                                                <div className="inline-flex items-center bg-[#0D0E14] border border-[#222634] rounded-full px-4 py-1.5 gap-4">
+                                                    <button 
+                                                        onClick={() => setSelectedQuantity(q => Math.max(1, q - 1))}
+                                                        className="text-gray-400 hover:text-white font-bold text-lg"
                                                     >
-                                                        Voir les détails
+                                                        -
+                                                    </button>
+                                                    <span className="font-extrabold text-sm text-white">{selectedQuantity}</span>
+                                                    <button 
+                                                        onClick={() => setSelectedQuantity(q => q + 1)}
+                                                        className="text-gray-400 hover:text-white font-bold text-lg"
+                                                    >
+                                                        +
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
-                                    );
-                                })}
+
+                                        {/* Action Triggers */}
+                                        <div className="flex flex-col gap-3">
+                                            <button 
+                                                onClick={() => handleAddToCart(activeModalProduct, selectedColor, selectedSize, selectedQuantity, true)}
+                                                className="w-full bg-[#10B981] hover:bg-[#059669] text-black font-black text-xs uppercase tracking-wider py-4 rounded-full transition-all shadow-lg shadow-[#10B981]/20 cursor-pointer"
+                                            >
+                                                Add to Cart
+                                            </button>
+
+                                            <button 
+                                                onClick={() => handleBuyNow(activeModalProduct, selectedColor, selectedSize, selectedQuantity)}
+                                                className="w-full bg-[#222634] hover:bg-[#2A2F42] text-white font-black text-xs uppercase tracking-wider py-4 rounded-full transition-all cursor-pointer"
+                                            >
+                                                Buy Now ↗
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            );
+                        })()}
+                    </div>
+                ) : (
+                    /* MAIN STOREFRONT CATALOG SPLIT VIEW */
+                    <div className="grid grid-cols-12 gap-8 my-6">
+                        
+                        {/* LEFT SIDEBAR: Vertical Category Tree */}
+                        <aside className="col-span-12 md:col-span-3 lg:col-span-2">
+                            <h3 className="text-sm font-black text-gray-200 uppercase tracking-wider mb-4">
+                                Categories
+                            </h3>
+                            
+                            <ul className="space-y-1 text-xs font-medium">
+                                <li>
+                                    <button
+                                        onClick={() => { setSelectedCategorySlug('ALL'); setPage(1); }}
+                                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                                            selectedCategorySlug === 'ALL' 
+                                                ? 'bg-[#161821] text-[#10B981] font-bold border-l-2 border-[#10B981]' 
+                                                : 'text-gray-400 hover:text-white hover:bg-[#161821]/50'
+                                        }`}
+                                    >
+                                        All Products
+                                    </button>
+                                </li>
+                                {categories.map((cat) => (
+                                    <li key={cat._id}>
+                                        <button
+                                            onClick={() => { setSelectedCategorySlug(cat.slug); setPage(1); }}
+                                            className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                                                selectedCategorySlug === cat.slug 
+                                                    ? 'bg-[#161821] text-[#10B981] font-bold border-l-2 border-[#10B981]' 
+                                                    : 'text-gray-400 hover:text-white hover:bg-[#161821]/50'
+                                            }`}
+                                        >
+                                            {cat.name}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </aside>
+
+                        {/* RIGHT SECTION: Horizontal Filter Pills + Product Card Grid */}
+                        <section className="col-span-12 md:col-span-9 lg:col-span-10">
+                            
+                            {/* Horizontal Category Pills */}
+                            <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+                                <button
+                                    onClick={() => { setSelectedCategorySlug('ALL'); setPage(1); }}
+                                    className={`px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider whitespace-nowrap transition-all ${
+                                        selectedCategorySlug === 'ALL' 
+                                            ? 'bg-[#10B981] text-black' 
+                                            : 'bg-[#161821] text-gray-400 border border-[#222634] hover:border-gray-500'
+                                    }`}
+                                >
+                                    New Arrivals
+                                </button>
+                                {categories.map((cat) => (
+                                    <button
+                                        key={cat._id}
+                                        onClick={() => { setSelectedCategorySlug(cat.slug); setPage(1); }}
+                                        className={`px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider whitespace-nowrap transition-all ${
+                                            selectedCategorySlug === cat.slug 
+                                                ? 'bg-[#10B981] text-black' 
+                                                : 'bg-[#161821] text-gray-400 border border-[#222634] hover:border-gray-500'
+                                        }`}
+                                    >
+                                        {cat.name}
+                                    </button>
+                                ))}
                             </div>
 
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', marginTop: '32px' }}>
-                                    <button
-                                        disabled={page === 1}
-                                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                                        style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #CBD5E1', backgroundColor: page === 1 ? '#F1F5F9' : '#FFF', cursor: page === 1 ? 'not-allowed' : 'pointer', fontWeight: '700', fontSize: '12px' }}
-                                    >
-                                        ◄ Précédent
-                                    </button>
-                                    <span style={{ fontSize: '13px', fontWeight: '700', color: '#475569' }}>
-                                        Page {page} sur {totalPages} ({totalProducts} produits)
-                                    </span>
-                                    <button
-                                        disabled={page === totalPages}
-                                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                        style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #CBD5E1', backgroundColor: page === totalPages ? '#F1F5F9' : '#FFF', cursor: page === totalPages ? 'not-allowed' : 'pointer', fontWeight: '700', fontSize: '12px' }}
-                                    >
-                                        Suivant ►
-                                    </button>
+                            {error && (
+                                <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-xs mb-6">
+                                    {error}
                                 </div>
                             )}
-                        </>
-                    )}
-                </>
-            )}
 
-            {/* Cart Drawer */}
-            {isCartOpen && (
-                <div onClick={() => setIsCartOpen(false)} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(3px)', zIndex: 1100, display: 'flex', justifyContent: 'flex-end' }}>
-                    <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: '420px', backgroundColor: '#FFF', height: '100%', display: 'flex', flexDirection: 'column', boxShadow: '-5px 0 25px rgba(0,0,0,0.2)', padding: '20px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '16px', borderBottom: '1px solid #E2E8F0' }}>
-                            <h2 style={{ fontSize: '18px', fontWeight: '800', margin: 0, color: '#0F172A' }}>Votre Panier ({cartCount})</h2>
-                            <button onClick={() => setIsCartOpen(false)} style={{ border: 'none', background: '#F1F5F9', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', fontWeight: '800' }}>✕</button>
-                        </div>
-
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            {cart.length === 0 ? (
-                                <div style={{ textAlign: 'center', color: '#94A3B8', marginTop: '40px', fontSize: '14px' }}>Votre panier est vide.</div>
+                            {/* Products Grid */}
+                            {loading ? (
+                                <div className="text-center py-20 text-gray-500 text-xs uppercase tracking-widest">
+                                    Loading products...
+                                </div>
+                            ) : products.length === 0 ? (
+                                <div className="text-center py-20 bg-[#161821] rounded-2xl border border-[#222634] text-gray-500 text-xs uppercase tracking-wider">
+                                    No products found.
+                                </div>
                             ) : (
-                                cart.map((item) => (
-                                    <div key={item.key} style={{ display: 'flex', gap: '12px', padding: '12px', border: '1px solid #F1F5F9', borderRadius: '8px', alignItems: 'center' }}>
-                                        <img src={item.image || '/placeholder.png'} alt={item.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px' }} />
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>{item.name}</div>
-                                            {(item.color || item.size) && (
-                                                <div style={{ fontSize: '11px', color: '#64748B' }}>
-                                                    {item.color && `Couleur: ${item.color} `}
-                                                    {item.size && `Taille: ${item.size}`}
+                                <>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                                        {products.map((product) => {
+                                            const productImage = product.images?.[0]?.url || product.imageUrl || (typeof product.images?.[0] === 'string' ? product.images[0] : null);
+
+                                            return (
+                                                <div 
+                                                    key={product._id} 
+                                                    onClick={() => handleOpenProduct(product)}
+                                                    className="group cursor-pointer flex flex-col justify-between"
+                                                >
+                                                    {/* Inset White Image Frame with Hover Zoom */}
+                                                    <div className="relative bg-white rounded-2xl h-56 flex items-center justify-center p-4 overflow-hidden mb-3 border border-[#1A1D26] shadow-sm transition-all duration-300">
+                                                        {productImage ? (
+                                                            <img 
+                                                                src={productImage} 
+                                                                alt={product.name} 
+                                                                className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out" 
+                                                            />
+                                                        ) : (
+                                                            <span className="text-xs text-gray-400">No Image</span>
+                                                        )}
+
+                                                        {/* Floating Quick Add Trigger */}
+                                                        <div className="absolute inset-x-3 bottom-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                            <button 
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleOpenProduct(product);
+                                                                }}
+                                                                className="w-full bg-[#0B0D12]/90 backdrop-blur-md text-white hover:bg-[#10B981] hover:text-black font-extrabold text-[11px] uppercase tracking-wider py-2 rounded-xl transition-colors shadow-lg"
+                                                            >
+                                                                Quick Add
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Meta Information */}
+                                                    <div className="px-1">
+                                                        <span className="text-[10px] font-bold text-gray-400 block mb-0.5 truncate">
+                                                            {product.category?.name || 'STORE DZ'}
+                                                        </span>
+                                                        <h3 className="font-sans text-sm font-semibold text-gray-200 leading-snug line-clamp-1 mb-2 group-hover:text-white transition-colors">
+                                                            {product.name}
+                                                        </h3>
+                                                        <div className="flex items-center justify-between mt-auto">
+                                                            <span className="font-sans font-extrabold text-sm text-white">
+                                                                {product.price} <span className="text-xs font-medium text-gray-400">DZD</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            )}
-                                            <div style={{ fontSize: '13px', fontWeight: '800', color: '#10B981', marginTop: '2px' }}>{item.price} DZD</div>
-                                        </div>
-
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', border: '1px solid #CBD5E1', borderRadius: '4px', padding: '2px 6px' }}>
-                                            <button onClick={() => updateQuantity(item.key, -1)} style={{ border: 'none', background: 'none', cursor: 'pointer', fontWeight: '800' }}>-</button>
-                                            <span style={{ fontSize: '12px', fontWeight: '700' }}>{item.quantity}</span>
-                                            <button onClick={() => updateQuantity(item.key, 1)} style={{ border: 'none', background: 'none', cursor: 'pointer', fontWeight: '800' }}>+</button>
-                                        </div>
-
-                                        <button onClick={() => removeFromCart(item.key)} style={{ border: 'none', background: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '14px' }}>🗑️</button>
+                                            );
+                                        })}
                                     </div>
-                                ))
+
+                                    {/* Pagination Controls */}
+                                    {totalPages > 1 && (
+                                        <div className="flex justify-center items-center gap-4 mt-12">
+                                            <button
+                                                disabled={page === 1}
+                                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                                className={`px-4 py-2 rounded-full border text-xs font-bold transition-colors ${
+                                                    page === 1 
+                                                        ? 'border-[#222634] text-gray-600 cursor-not-allowed' 
+                                                        : 'border-[#222634] text-gray-300 hover:bg-[#161821] hover:text-white'
+                                                }`}
+                                            >
+                                                ◄ Previous
+                                            </button>
+                                            <span className="text-xs font-bold text-gray-400">
+                                                Page {page} of {totalPages} ({totalProducts} items)
+                                            </span>
+                                            <button
+                                                disabled={page === totalPages}
+                                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                                className={`px-4 py-2 rounded-full border text-xs font-bold transition-colors ${
+                                                    page === totalPages 
+                                                        ? 'border-[#222634] text-gray-600 cursor-not-allowed' 
+                                                        : 'border-[#222634] text-gray-300 hover:bg-[#161821] hover:text-white'
+                                                }`}
+                                            >
+                                                Next ►
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
                             )}
+
+                        </section>
+
+                    </div>
+                )}
+
+            </main>
+
+            {/* CART DRAWER PANEL */}
+            {isCartOpen && (
+                <div onClick={() => setIsCartOpen(false)} className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex justify-end">
+                    <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md bg-[#161821] border-l border-[#222634] h-full p-6 flex flex-col justify-between shadow-2xl">
+                        
+                        <div>
+                            <div className="flex items-center justify-between border-b border-[#222634] pb-4 mb-6">
+                                <h2 className="font-serif text-xl font-bold text-white">Your Cart ({cartCount})</h2>
+                                <button onClick={() => setIsCartOpen(false)} className="text-gray-400 hover:text-white font-bold text-lg">✕</button>
+                            </div>
+
+                            <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-220px)] pr-1">
+                                {cart.length === 0 ? (
+                                    <div className="text-center text-gray-500 py-12 text-xs uppercase tracking-wider">
+                                        Your cart is empty.
+                                    </div>
+                                ) : (
+                                    cart.map((item) => (
+                                        <div key={item.key} className="flex items-center gap-3 bg-[#0D0E14] p-3 rounded-2xl border border-[#222634]">
+                                            <img src={item.image || '/placeholder.png'} alt={item.name} className="w-12 h-12 object-cover rounded-xl bg-white/5" />
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
+                                                {(item.color || item.size) && (
+                                                    <p className="text-[10px] text-gray-400">
+                                                        {item.color && `Color: ${item.color} `}
+                                                        {item.size && `Size: ${item.size}`}
+                                                    </p>
+                                                )}
+                                                <p className="text-xs font-black text-[#10B981] mt-0.5">{item.price} DZD</p>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 bg-[#161821] border border-[#222634] rounded-lg px-2 py-1 text-xs">
+                                                <button onClick={() => updateQuantity(item.key, -1)} className="text-gray-400 hover:text-white font-bold">-</button>
+                                                <span className="font-bold text-white">{item.quantity}</span>
+                                                <button onClick={() => updateQuantity(item.key, 1)} className="text-gray-400 hover:text-white font-bold">+</button>
+                                            </div>
+
+                                            <button onClick={() => removeFromCart(item.key)} className="text-red-400/80 hover:text-red-400 p-1 text-xs">
+                                                
+                                            </button>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
                         </div>
 
                         {cart.length > 0 && (
-                            <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '16px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: '800', color: '#0F172A', marginBottom: '16px' }}>
+                            <div className="border-t border-[#222634] pt-4">
+                                <div className="flex justify-between text-sm font-black text-white mb-4">
                                     <span>Total:</span>
-                                    <span>{cartTotal} DZD</span>
+                                    <span className="text-[#10B981]">{cartTotal} DZD</span>
                                 </div>
                                 <button 
                                     onClick={() => {
-                                          setIsCartOpen(false);
-                                          if (onGoToCheckout) {
-                                                onGoToCheckout();
-                                          } else if (onCartCheckout) {
-                                                onCartCheckout(cart);
-                                          }
+                                        setIsCartOpen(false);
+                                        if (onGoToCheckout) {
+                                            onGoToCheckout();
+                                        } else if (onCartCheckout) {
+                                            onCartCheckout(cart);
+                                        }
                                     }}
-                                    style={{ width: '100%', padding: '14px', backgroundColor: '#10B981', color: '#FFF', border: 'none', borderRadius: '8px', fontWeight: '800', fontSize: '14px', cursor: 'pointer' }}
-                                    >
-                                    Valider la Commande ({cartTotal} DZD)
-                              </button>
+                                    className="w-full bg-[#10B981] hover:bg-[#059669] text-black font-black text-xs uppercase tracking-wider py-4 rounded-full transition-all cursor-pointer shadow-lg shadow-[#10B981]/20"
+                                >
+                                    Proceed to Checkout ({cartTotal} DZD)
+                                </button>
                             </div>
                         )}
+
                     </div>
                 </div>
             )}
+
+            {/* Footer Component */}
+            <Footer />
+
+            {/* CART DRAWER PANEL */}
+            {isCartOpen && (
+                <div onClick={() => setIsCartOpen(false)} className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex justify-end">
+                    {/* ... cart contents ... */}
+                </div>
+            )}
+        
         </div>
     );
 }

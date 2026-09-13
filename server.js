@@ -56,7 +56,7 @@ app.use( '/api/v2/auth/logout' , rateLimiter, require("./routing/V1/logout"));
 
 //time for verfieJWT =-= !(refresh and verfie  , u will burnout ah coding life =*=)
 
-app.get("/ping", (req, res) => {
+app.get("/ping", rateLimiter , (req, res) => {
   res.status(200).send("OK");
 });
 

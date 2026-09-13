@@ -21,7 +21,6 @@ export default function App() {
 
     // Store navigation state
     const [selectedProductId, setSelectedProductId] = useState(null);
-    // NEW: Track variant metadata for Direct Buy ("Acheter maintenant")
     const [directBuyDetails, setDirectBuyDetails] = useState(null);
     const [isCheckout, setIsCheckout] = useState(() => window.location.pathname === '/checkout');
 
@@ -55,7 +54,7 @@ export default function App() {
 
     const handleResetStore = () => {
         setSelectedProductId(null);
-        setDirectBuyDetails(null); // Clear variant state on reset
+        setDirectBuyDetails(null);
         setIsCheckout(false);
         window.history.pushState({}, '', '/');
     };
@@ -66,7 +65,7 @@ export default function App() {
     };
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#F8FAFC', display: 'flex', flexDirection: 'column' }}>
+        <div className="min-h-screen bg-[#0B0D12] text-gray-100 flex flex-col font-sans selection:bg-[#10B981] selection:text-black">
             {viewMode === 'store' ? (
                 <>
                     <StoreNavbar 
@@ -74,7 +73,7 @@ export default function App() {
                         onResetStore={handleResetStore} 
                         onGoToCheckout={handleGoToCheckout}
                     />
-                    <main style={{ flex: 1 }}>
+                    <main className="flex-1 w-full">
                         {isCheckout || selectedProductId ? (
                             <Checkout 
                                 productId={selectedProductId}
@@ -87,7 +86,7 @@ export default function App() {
                             <Catalog 
                                 onSelectProduct={(id, variantData) => {
                                     setSelectedProductId(id);
-                                    setDirectBuyDetails(variantData || null); // Save variant details
+                                    setDirectBuyDetails(variantData || null);
                                     handleGoToCheckout();
                                 }}
                                 onGoToCheckout={handleGoToCheckout}
@@ -106,20 +105,20 @@ export default function App() {
                                 onLogout={handleLogout} 
                                 onGoToStore={() => navigateTo('/', 'store')} 
                             />
-                            <main style={{ flex: 1 }}>
+                            <main className="flex-1 w-full bg-[#161821] p-6">
                                 {adminTab === 'orders' && <OrdersDashboard />}
                                 {adminTab === 'products' && <ProductManagement />}
                                 {adminTab === 'categories' && <CategoryManagement />}
                             </main>
                         </>
                     ) : (
-                        <div style={{ flex: 1 }}>
-                            <div style={{ padding: '16px', textAlign: 'center' }}>
+                        <div className="flex-1 flex flex-col justify-center items-center p-4">
+                            <div className="mb-4">
                                 <button 
                                     onClick={() => navigateTo('/', 'store')}
-                                    style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: '13px', fontWeight: '700' }}
+                                    className="text-xs font-bold text-gray-400 hover:text-white transition-colors"
                                 >
-                                    ← Retour à la boutique
+                                    ← Back to Store
                                 </button>
                             </div>
                             <Login onLoginSuccess={() => setIsAuthenticated(true)} />
