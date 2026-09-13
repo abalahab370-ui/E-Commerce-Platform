@@ -63,7 +63,6 @@ const ALGERIA_LOCATIONS = [
 ];
 
 export default function Checkout({ productId, selectedVariantId, selectedColor, selectedSize, onBackToStore }) {
-    // Read cart directly from localStorage
     const [cartItems, setCartItems] = useState(() => {
         try {
             const saved = localStorage.getItem('storedz_cart');
@@ -85,7 +84,7 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
         phone: '',
         wilaya: '16 - Alger',
         baladiya: '',
-        deliveryType: 'home', // Options: 'home' or 'desk'
+        deliveryType: 'home',
         address: ''
     });
 
@@ -121,7 +120,6 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
         setSubmitting(true);
         setError('');
 
-        // Extract variant metadata for single product or cart items
         const orderItems = productId
             ? [{
                 productId,
@@ -150,7 +148,7 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
                 phone: form.phone,
                 wilaya: form.wilaya,
                 baladiya: form.baladiya,
-                deliveryType: form.deliveryType, // Passed dynamically ('home' or 'desk')
+                deliveryType: form.deliveryType,
                 address: form.address
             },
             items: orderItems
@@ -180,15 +178,15 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
 
     if (orderSuccess) {
         return (
-            <div style={{ maxWidth: '500px', margin: '40px auto', padding: '32px', backgroundColor: '#FFF', borderRadius: '12px', border: '1px solid #E2E8F0', textAlign: 'center', fontFamily: 'sans-serif' }}>
-                <div style={{ width: '60px', height: '60px', backgroundColor: '#DCFCE7', color: '#16A34A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', margin: '0 auto 16px auto' }}>✓</div>
-                <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#0F172A', margin: 0 }}>Commande Enregistrée !</h2>
-                <p style={{ fontSize: '13px', color: '#64748B', marginTop: '8px', lineHeight: '1.5' }}>
-                    Merci <strong>{form.customerName}</strong>. Notre centre d'appel va vous contacter au <strong>{form.phone}</strong> pour confirmer votre commande avant l'expédition.
+            <div className="max-w-lg mx-auto my-12 p-8 bg-[#161821] border border-[#222634] rounded-3xl text-center shadow-2xl">
+                <div className="w-16 h-16 bg-[#10B981]/10 text-[#10B981] rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-[#10B981]/20">✓</div>
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Commande Enregistrée !</h2>
+                <p className="text-xs sm:text-sm text-gray-400 mb-6 leading-relaxed">
+                    Merci <strong className="text-white">{form.customerName}</strong>. Notre centre d'appel va vous contacter au <strong className="text-white">{form.phone}</strong> pour confirmer votre commande avant l'expédition.
                 </p>
                 <button
                     onClick={onBackToStore}
-                    style={{ marginTop: '20px', padding: '10px 20px', backgroundColor: '#0F172A', color: '#FFF', border: 'none', borderRadius: '6px', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}
+                    className="w-full bg-[#10B981] hover:bg-[#059669] text-black font-black text-xs uppercase tracking-wider py-4 rounded-full transition-all shadow-lg shadow-[#10B981]/20 cursor-pointer"
                 >
                     Retour à la boutique
                 </button>
@@ -197,32 +195,32 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
     }
 
     return (
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '24px 16px', fontFamily: 'sans-serif' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-10">
             <button
                 onClick={onBackToStore}
-                style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: '13px', fontWeight: '700', marginBottom: '16px' }}
+                className="bg-[#161821] hover:bg-[#222634] border border-[#222634] text-gray-300 font-bold text-xs px-5 py-2.5 rounded-full mb-6 transition-colors flex items-center gap-2 cursor-pointer"
             >
                 ← Continuer mes achats
             </button>
 
-            <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#0F172A', marginBottom: '20px' }}>
-                Validation de la Commande (Paiement à la livraison)
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-white mb-6">
+                Validation de la Commande <span className="text-sm font-sans font-normal text-gray-400 block sm:inline mt-1 sm:mt-0">(Paiement à la livraison)</span>
             </h1>
 
             {error && (
-                <div style={{ padding: '12px', backgroundColor: '#FEE2E2', color: '#DC2626', borderRadius: '6px', fontSize: '13px', marginBottom: '20px' }}>
+                <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-xs mb-6">
                     {error}
                 </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px', alignItems: 'start' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
-                {/* Form Section */}
-                <form onSubmit={handleSubmit} style={{ backgroundColor: '#FFF', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <h2 style={{ fontSize: '15px', fontWeight: '700', color: '#0F172A', margin: 0 }}>Coordonnées de Livraison</h2>
+                {/* Form Card (Desktop: Left columns, Mobile: Top order) */}
+                <form onSubmit={handleSubmit} className="lg:col-span-7 bg-[#161821] border border-[#222634] rounded-3xl p-6 sm:p-8 flex flex-col gap-5 shadow-xl">
+                    <h2 className="text-sm font-black uppercase tracking-wider text-[#10B981] mb-1">Coordonnées de Livraison</h2>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>Nom et Prénom *</label>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Nom et Prénom *</label>
                         <input
                             type="text"
                             name="customerName"
@@ -230,12 +228,12 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
                             onChange={handleInputChange}
                             required
                             placeholder="ex: Mohamed Benali"
-                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' }}
+                            className="w-full bg-[#0D0E14] border border-[#222634] text-xs text-gray-200 placeholder-gray-600 rounded-xl py-3 px-4 focus:outline-none focus:border-[#10B981] transition-colors"
                         />
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>Numéro de Téléphone *</label>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Numéro de Téléphone *</label>
                         <input
                             type="tel"
                             name="phone"
@@ -243,179 +241,168 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
                             onChange={handleInputChange}
                             required
                             placeholder="06XX XX XX XX"
-                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' }}
+                            className="w-full bg-[#0D0E14] border border-[#222634] text-xs text-gray-200 placeholder-gray-600 rounded-xl py-3 px-4 focus:outline-none focus:border-[#10B981] transition-colors"
                         />
                     </div>
 
-                    <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>Wilaya *</label>
-                        <select
-                            name="wilaya"
-                            value={form.wilaya}
-                            onChange={handleInputChange}
-                            required
-                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' }}
-                        >
-                            {ALGERIA_LOCATIONS.map((loc) => (
-                                <option key={loc.code} value={loc.name}>{loc.name}</option>
-                            ))}
-                        </select>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Wilaya *</label>
+                            <select
+                                name="wilaya"
+                                value={form.wilaya}
+                                onChange={handleInputChange}
+                                required
+                                className="w-full bg-[#0D0E14] border border-[#222634] text-xs text-gray-200 rounded-xl py-3 px-4 focus:outline-none focus:border-[#10B981] transition-colors cursor-pointer"
+                            >
+                                {ALGERIA_LOCATIONS.map((loc) => (
+                                    <option key={loc.code} value={loc.name} className="bg-[#161821] text-white">{loc.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Commune (Baladiya) *</label>
+                            <select
+                                name="baladiya"
+                                value={form.baladiya}
+                                onChange={handleInputChange}
+                                required
+                                className="w-full bg-[#0D0E14] border border-[#222634] text-xs text-gray-200 rounded-xl py-3 px-4 focus:outline-none focus:border-[#10B981] transition-colors cursor-pointer"
+                            >
+                                <option value="" className="bg-[#161821] text-gray-500">-- Sélectionner Commune --</option>
+                                {availableCommunes.map((commune) => (
+                                    <option key={commune} value={commune} className="bg-[#161821] text-white">{commune}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>Commune (Baladiya) *</label>
-                        <select
-                            name="baladiya"
-                            value={form.baladiya}
-                            onChange={handleInputChange}
-                            required
-                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' }}
-                        >
-                            <option value="">-- Sélectionner Commune --</option>
-                            {availableCommunes.map((commune) => (
-                                <option key={commune} value={commune}>{commune}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    {/* Delivery Type Selector */}
-                    <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '6px' }}>Mode de Livraison *</label>
-                        <div style={{ display: 'flex', gap: '12px' }}>
-                            <label style={{
-                                flex: 1,
-                                padding: '10px 12px',
-                                border: `2px solid ${form.deliveryType === 'home' ? '#10B981' : '#E2E8F0'}`,
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontSize: '13px',
-                                fontWeight: '600',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                backgroundColor: form.deliveryType === 'home' ? '#ECFDF5' : '#FFF'
-                            }}>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Mode de Livraison *</label>
+                        <div className="grid grid-cols-2 gap-3">
+                            <label className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
+                                form.deliveryType === 'home' 
+                                    ? 'border-[#10B981] bg-[#10B981]/10 text-white' 
+                                    : 'border-[#222634] bg-[#0D0E14] text-gray-400 hover:border-gray-600'
+                            }`}>
                                 <input 
                                     type="radio" 
                                     name="deliveryType" 
                                     value="home" 
                                     checked={form.deliveryType === 'home'} 
                                     onChange={handleInputChange} 
+                                    className="accent-[#10B981]"
                                 />
-                                 À Domicile
+                                <span className="text-xs font-extrabold uppercase tracking-wider">À Domicile</span>
                             </label>
 
-                            <label style={{
-                                flex: 1,
-                                padding: '10px 12px',
-                                border: `2px solid ${form.deliveryType === 'desk' ? '#10B981' : '#E2E8F0'}`,
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontSize: '13px',
-                                fontWeight: '600',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                backgroundColor: form.deliveryType === 'desk' ? '#ECFDF5' : '#FFF'
-                            }}>
+                            <label className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
+                                form.deliveryType === 'desk' 
+                                    ? 'border-[#10B981] bg-[#10B981]/10 text-white' 
+                                    : 'border-[#222634] bg-[#0D0E14] text-gray-400 hover:border-gray-600'
+                            }`}>
                                 <input 
                                     type="radio" 
                                     name="deliveryType" 
                                     value="desk" 
                                     checked={form.deliveryType === 'desk'} 
                                     onChange={handleInputChange} 
+                                    className="accent-[#10B981]"
                                 />
-                                 Au Bureau
+                                <span className="text-xs font-extrabold uppercase tracking-wider">Au Bureau</span>
                             </label>
                         </div>
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#475569', marginBottom: '4px' }}>Adresse Exacte *</label>
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Adresse Exacte *</label>
                         <textarea
                             name="address"
                             value={form.address}
                             onChange={handleInputChange}
                             required
-                            rows="2"
+                            rows="3"
                             placeholder={form.deliveryType === 'desk' ? 'Point relais / Adresse du bureau de livraison...' : 'Rue, N° de maison, quartier...'}
-                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box', resize: 'vertical' }}
+                            className="w-full bg-[#0D0E14] border border-[#222634] text-xs text-gray-200 placeholder-gray-600 rounded-xl p-4 focus:outline-none focus:border-[#10B981] transition-colors resize-none"
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={submitting || loadingProduct}
-                        style={{ padding: '12px', backgroundColor: '#10B981', color: '#FFF', border: 'none', borderRadius: '6px', fontWeight: '800', fontSize: '14px', cursor: 'pointer', marginTop: '8px' }}
+                        className="w-full bg-[#10B981] hover:bg-[#059669] text-black font-black text-xs uppercase tracking-wider py-4 rounded-full transition-all shadow-lg shadow-[#10B981]/20 cursor-pointer disabled:opacity-50 mt-2"
                     >
                         {submitting ? 'Confirmation...' : 'Confirmer ma commande (COD)'}
                     </button>
                 </form>
 
-                {/* Summary Section */}
-                <div style={{ backgroundColor: '#FFF', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '20px' }}>
-                    <h2 style={{ fontSize: '15px', fontWeight: '700', color: '#0F172A', marginTop: 0, marginBottom: '16px' }}>Récapitulatif</h2>
+                {/* Summary Card (Desktop: Right columns, Mobile: Bottom order) */}
+                <div className="lg:col-span-5 bg-[#161821] border border-[#222634] rounded-3xl p-6 sm:p-8 shadow-xl sticky top-24">
+                    <h2 className="text-sm font-black uppercase tracking-wider text-white mb-4 pb-3 border-b border-[#222634]">Récapitulatif</h2>
 
                     {loadingProduct ? (
-                        <div style={{ fontSize: '12px', color: '#64748B' }}>Chargement du produit...</div>
+                        <div className="text-xs text-gray-500 py-8 text-center uppercase tracking-wider">Chargement du produit...</div>
                     ) : productId && product ? (
                         <div>
-                            <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #F1F5F9' }}>
-                                {product.imageUrl && (
-                                    <img src={product.imageUrl} alt={product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '6px' }} />
-                                )}
-                                <div>
-                                    <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>{product.name}</h4>
+                            <div className="flex gap-4 items-center mb-6 pb-6 border-b border-[#222634]">
+                                {product.imageUrl || product.images?.[0] ? (
+                                    <div className="w-16 h-16 bg-white rounded-xl overflow-hidden p-1 border border-[#222634] flex-shrink-0 flex items-center justify-center">
+                                        <img src={product.imageUrl || (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url)} alt={product.name} className="max-w-full max-h-full object-contain" />
+                                    </div>
+                                ) : null}
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-bold text-xs sm:text-sm text-white truncate mb-1">{product.name}</h4>
                                     {(selectedColor || selectedSize) && (
-                                        <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px' }}>
+                                        <div className="text-[11px] text-gray-400 mb-1">
                                             {selectedColor && `Couleur: ${selectedColor}`} {selectedSize && `| Taille: ${selectedSize}`}
                                         </div>
                                     )}
-                                    <span style={{ fontSize: '12px', color: '#10B981', fontWeight: '700', display: 'block', marginTop: '4px' }}>{product.price} DZD</span>
+                                    <span className="text-xs font-black text-[#10B981]">{product.price} DZD</span>
                                 </div>
                             </div>
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <span style={{ fontSize: '12px', fontWeight: '700', color: '#475569' }}>Quantité:</span>
-                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <div className="flex justify-between items-center mb-6">
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantité:</span>
+                                <div className="flex items-center gap-3 bg-[#0D0E14] border border-[#222634] rounded-full px-3 py-1">
                                     <button 
                                         type="button" 
                                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                                        style={{ width: '28px', height: '28px', border: '1px solid #CBD5E1', borderRadius: '4px', cursor: 'pointer', fontWeight: '700' }}
+                                        className="text-gray-400 hover:text-white font-bold text-base px-1"
                                     >-</button>
-                                    <span style={{ fontSize: '13px', fontWeight: '700' }}>{quantity}</span>
+                                    <span className="font-extrabold text-xs text-white">{quantity}</span>
                                     <button 
                                         type="button" 
                                         onClick={() => setQuantity(q => q + 1)}
-                                        style={{ width: '28px', height: '28px', border: '1px solid #CBD5E1', borderRadius: '4px', cursor: 'pointer', fontWeight: '700' }}
+                                        className="text-gray-400 hover:text-white font-bold text-base px-1"
                                     >+</button>
                                 </div>
                             </div>
                         </div>
                     ) : cartItems.length > 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+                        <div className="flex flex-col gap-3 mb-6 max-h-[280px] overflow-y-auto pr-1">
                             {cartItems.map((item, index) => (
-                                <div key={item._id || item.id || index} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', borderBottom: '1px solid #F1F5F9', paddingBottom: '8px' }}>
-                                    <div>
-                                        <div style={{ fontWeight: '700', color: '#0F172A' }}>{item.name}</div>
+                                <div key={item.key || item._id || index} className="flex items-center justify-between gap-3 bg-[#0D0E14] p-3 rounded-xl border border-[#222634]">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-bold text-xs text-white truncate">{item.name}</div>
                                         {(item.color || item.size) && (
-                                            <div style={{ fontSize: '11px', color: '#64748B' }}>
+                                            <div className="text-[10px] text-gray-400">
                                                 {item.color && `Couleur: ${item.color} `}{item.size && `| Taille: ${item.size}`}
                                             </div>
                                         )}
-                                        <div style={{ fontSize: '11px', color: '#64748B' }}>Qté: {item.quantity}</div>
+                                        <div className="text-[10px] text-gray-500">Qté: {item.quantity}</div>
                                     </div>
-                                    <span style={{ fontWeight: '700', color: '#10B981' }}>{item.price * item.quantity} DZD</span>
+                                    <span className="font-black text-xs text-[#10B981] whitespace-nowrap">{item.price * item.quantity} DZD</span>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div style={{ fontSize: '12px', color: '#94A3B8' }}>Aucun article dans le panier.</div>
+                        <div className="text-xs text-gray-500 py-12 text-center uppercase tracking-wider">Aucun article dans le panier.</div>
                     )}
 
-                    <div style={{ borderTop: '2px dashed #E2E8F0', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '800', color: '#0F172A' }}>Total à payer:</span>
-                        <span style={{ fontSize: '18px', fontWeight: '900', color: '#10B981' }}>{calculateTotal()} DZD</span>
+                    <div className="border-t border-[#222634] pt-4 mt-4 flex justify-between items-center">
+                        <span className="text-xs font-black uppercase tracking-wider text-white">Total à payer:</span>
+                        <span className="text-lg sm:text-xl font-black text-[#10B981]">{calculateTotal()} DZD</span>
                     </div>
                 </div>
 
