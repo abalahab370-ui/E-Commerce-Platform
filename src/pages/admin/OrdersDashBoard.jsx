@@ -69,11 +69,13 @@ export default function OrdersDashboard() {
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <div>
-                    <span style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6366F1' }}>Gestion Logistique</span>
-                    <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#0F172A', margin: '2px 0 0 0', letterSpacing: '-0.02em' }}>
-                        Commandes COD
-                    </h1>
-                </div>
+    <span style={{ fontSize: '11px', fontWeight: '700', color: '#94A3B8', letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+        Gestion Logistique
+    </span>
+    <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#FFFFFF', margin: 0, letterSpacing: '-0.02em' }}>
+        Commandes COD
+    </h1>
+</div>
                 <button 
                     onClick={loadOrders}
                     disabled={loading}
