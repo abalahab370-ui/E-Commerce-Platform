@@ -2,6 +2,10 @@
 
 This repository contains the frontend administration panel and backend API integration for managing an e-commerce platform. The project structure and architectural goals align with the standards outlined in the [roadmap.sh E-commerce API project](https://roadmap.sh/projects/ecommerce-api).
 
+## Live Demo
+
+* **Deployed Application**: [https://storedz-ui.onrender.com/](https://storedz-ui.onrender.com/)
+
 ## Core Features
 
 The administrative interface currently features a comprehensive category management module (`CategoryManagement_3.jsx`)[cite: 13]. Its primary capabilities include:
@@ -28,6 +32,7 @@ The administrative interface currently features a comprehensive category managem
 3. Verify that your backend server (handling the `api.getCategories`, `api.createCategory`, etc. routes) is running[cite: 13].
 4. Execute `npm start` to launch the frontend development server.
 
-## References
+## References & Useful Links
 
-* **API Architecture Reference**: [https://roadmap.sh/projects/ecommerce-api](https://roadmap.sh/projects/ecommerce-api)s
+* **Live Frontend Interface**: [https://storedz-ui.onrender.com/](https://storedz-ui.onrender.com/)
+* **API Architecture Reference**: [https://roadmap.sh/projects/ecommerce-api](https://roadmap.sh/projects/ecommerce-api)
