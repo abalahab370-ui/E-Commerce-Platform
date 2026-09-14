@@ -65,29 +65,30 @@ export default function OrdersDashboard() {
     };
 
     return (
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px', fontFamily: 'Inter, system-ui, -apple-system, sans-serif', color: '#0F172A' }}>
-            {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px 12px', fontFamily: 'Inter, system-ui, -apple-system, sans-serif', color: '#0F172A', boxSizing: 'border-box', width: '100%' }}>
+            
+            {/* Responsive Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
                 <div>
-    <span style={{ fontSize: '11px', fontWeight: '700', color: '#94A3B8', letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
-        Gestion Logistique
-    </span>
-    <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#FFFFFF', margin: 0, letterSpacing: '-0.02em' }}>
-        Commandes COD
-    </h1>
-</div>
+                    <span style={{ fontSize: '11px', fontWeight: '700', color: '#94A3B8', letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                        Gestion Logistique
+                    </span>
+                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#FFFFFF', margin: 0, letterSpacing: '-0.02em' }}>
+                        Commandes COD
+                    </h1>
+                </div>
                 <button 
                     onClick={loadOrders}
                     disabled={loading}
-                    style={{ padding: '10px 18px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#334155', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+                    style={{ padding: '8px 16px', backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', color: '#334155', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
                 >
                     {loading ? 'Rafraîchissement...' : ' Actualiser'}
                 </button>
             </div>
 
-            {/* Search Toolbar */}
-            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
-                <div style={{ flex: 1, position: 'relative' }}>
+            {/* Responsive Search Toolbar */}
+            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px', width: '100%' }}>
+                <div style={{ flex: '1 1 200px', minWidth: 0 }}>
                     <input 
                         type="text"
                         placeholder="Rechercher par Nom exact ou Téléphone..."
@@ -95,7 +96,7 @@ export default function OrdersDashboard() {
                         onChange={(e) => setSearchInput(e.target.value)}
                         style={{
                             width: '100%',
-                            padding: '11px 16px',
+                            padding: '10px 14px',
                             borderRadius: '8px',
                             border: '1px solid #CBD5E1',
                             fontSize: '14px',
@@ -108,7 +109,8 @@ export default function OrdersDashboard() {
                 <button
                     type="submit"
                     style={{
-                        padding: '11px 22px',
+                        flex: '0 0 auto',
+                        padding: '10px 18px',
                         backgroundColor: '#4F46E5',
                         color: '#FFF',
                         border: 'none',
@@ -125,7 +127,8 @@ export default function OrdersDashboard() {
                         type="button"
                         onClick={handleClearSearch}
                         style={{
-                            padding: '11px 16px',
+                            flex: '0 0 auto',
+                            padding: '10px 14px',
                             backgroundColor: '#F1F5F9',
                             color: '#475569',
                             border: '1px solid #CBD5E1',
@@ -140,8 +143,8 @@ export default function OrdersDashboard() {
                 )}
             </form>
 
-            {/* Pill Tabs Header */}
-            <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '12px', marginBottom: '24px', overflowX: 'auto' }}>
+            {/* Horizontally Scrollable Status Tabs for Mobile */}
+            <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #334155', paddingBottom: '12px', marginBottom: '20px', overflowX: 'auto', width: '100%', boxSizing: 'border-box', WebkitOverflowScrolling: 'touch' }}>
                 {STATUSES.map((status) => {
                     const isActive = activeStatus === status.key;
                     return (
@@ -149,14 +152,16 @@ export default function OrdersDashboard() {
                             key={status.key}
                             onClick={() => handleTabChange(status.key)}
                             style={{
-                                padding: '8px 16px',
+                                padding: '8px 14px',
                                 borderRadius: '20px',
-                                border: isActive ? '1px solid #4F46E5' : '1px solid #E2E8F0',
+                                border: isActive ? '1px solid #4F46E5' : '1px solid #334155',
                                 fontWeight: '700',
-                                fontSize: '13px',
+                                fontSize: '12px',
                                 cursor: 'pointer',
-                                backgroundColor: isActive ? '#EEF2FF' : '#FFFFFF',
-                                color: isActive ? '#4F46E5' : '#64748B',
+                                backgroundColor: isActive ? '#EEF2FF' : '#1E293B',
+                                color: isActive ? '#4F46E5' : '#94A3B8',
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
                                 transition: 'all 0.15s ease'
                             }}
                         >
@@ -168,18 +173,18 @@ export default function OrdersDashboard() {
 
             {/* Error Notification */}
             {error && (
-                <div style={{ padding: '14px 18px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', borderRadius: '10px', marginBottom: '24px', fontSize: '13px' }}>
+                <div style={{ padding: '12px 16px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', borderRadius: '10px', marginBottom: '20px', fontSize: '13px' }}>
                     {error}
                 </div>
             )}
 
             {/* Orders Feed */}
             {loading ? (
-                <div style={{ textAlign: 'center', padding: '60px', color: '#64748B', fontSize: '14px' }}>
+                <div style={{ textAlign: 'center', padding: '40px 16px', color: '#94A3B8', fontSize: '14px' }}>
                     Chargement des commandes...
                 </div>
             ) : orders.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '60px', backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0', color: '#94A3B8', fontSize: '14px' }}>
+                <div style={{ textAlign: 'center', padding: '40px 16px', backgroundColor: '#1E293B', borderRadius: '12px', border: '1px solid #334155', color: '#94A3B8', fontSize: '14px' }}>
                     Aucune commande enregistrée pour ce statut.
                 </div>
             ) : (
@@ -196,56 +201,58 @@ export default function OrdersDashboard() {
                         return (
                             <div 
                                 key={order._id} 
-                                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '20px 24px', boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)' }}
+                                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '16px', boxShadow: '0 1px 3px rgba(15, 23, 42, 0.05)', boxSizing: 'border-box' }}
                             >
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #F1F5F9', paddingBottom: '14px', marginBottom: '16px' }}>
+                                {/* Card Top Row */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #F1F5F9', paddingBottom: '12px', marginBottom: '14px' }}>
                                     <div>
-                                        <span style={{ fontSize: '11px', fontWeight: '700', color: '#94A3B8', letterSpacing: '0.03em' }}>ID: #{order._id}</span>
-                                        <h3 style={{ margin: '2px 0 0 0', fontSize: '18px', fontWeight: '800', color: '#0F172A' }}>
+                                        <span style={{ fontSize: '10px', fontWeight: '700', color: '#94A3B8', letterSpacing: '0.03em', wordBreak: 'break-all' }}>ID: #{order._id}</span>
+                                        <h3 style={{ margin: '2px 0 0 0', fontSize: '17px', fontWeight: '800', color: '#0F172A' }}>
                                             {fullName}
                                         </h3>
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
-                                        <div style={{ fontSize: '20px', fontWeight: '800', color: '#059669' }}>
+                                        <div style={{ fontSize: '18px', fontWeight: '800', color: '#059669' }}>
                                             {order.totalAmount} DZD
                                         </div>
-                                        <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px' }}>
+                                        <div style={{ fontSize: '10px', color: '#64748B', marginTop: '2px' }}>
                                             {shippingCost > 0 ? `+ Livr: ${shippingCost} DZD` : 'Frais de livraison inclus'}
                                         </div>
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '16px' }}>
+                                {/* Order Content Grid */}
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '16px' }}>
                                     <div>
-                                        <span style={{ color: '#94A3B8', display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contact</span>
+                                        <span style={{ color: '#94A3B8', display: 'block', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contact</span>
                                         {phone ? (
                                             <a 
                                                 href={`tel:${phone}`} 
-                                                style={{ color: '#4F46E5', fontWeight: '700', fontSize: '14px', textDecoration: 'none', display: 'inline-block', marginTop: '4px' }}
+                                                style={{ color: '#4F46E5', fontWeight: '700', fontSize: '13px', textDecoration: 'none', display: 'inline-block', marginTop: '2px' }}
                                             >
                                                 📞 {phone}
                                             </a>
                                         ) : (
-                                            <span style={{ color: '#94A3B8', marginTop: '4px', display: 'inline-block', fontSize: '13px' }}>Non renseigné</span>
+                                            <span style={{ color: '#94A3B8', marginTop: '2px', display: 'inline-block', fontSize: '12px' }}>Non renseigné</span>
                                         )}
                                     </div>
 
                                     <div>
-                                        <span style={{ color: '#94A3B8', display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Destination</span>
-                                        <div style={{ color: '#0F172A', fontWeight: '700', fontSize: '13px', marginTop: '4px' }}>
+                                        <span style={{ color: '#94A3B8', display: 'block', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Destination</span>
+                                        <div style={{ color: '#0F172A', fontWeight: '700', fontSize: '12px', marginTop: '2px' }}>
                                             {wilaya} {baladiya ? `- ${baladiya}` : ''}
                                         </div>
                                         {address && (
-                                            <div style={{ fontSize: '12px', color: '#64748B', marginTop: '2px' }}>
+                                            <div style={{ fontSize: '11px', color: '#64748B', marginTop: '2px' }}>
                                                 {address}
                                             </div>
                                         )}
-                                        <div style={{ marginTop: '8px' }}>
+                                        <div style={{ marginTop: '6px' }}>
                                             <span style={{
                                                 display: 'inline-block',
-                                                padding: '3px 8px',
-                                                borderRadius: '6px',
-                                                fontSize: '11px',
+                                                padding: '2px 8px',
+                                                borderRadius: '4px',
+                                                fontSize: '10px',
                                                 fontWeight: '700',
                                                 backgroundColor: deliveryType === 'desk' ? '#FFFBEB' : '#ECFDF5',
                                                 color: deliveryType === 'desk' ? '#B45309' : '#047857',
@@ -257,13 +264,13 @@ export default function OrdersDashboard() {
                                     </div>
 
                                     <div>
-                                        <span style={{ color: '#94A3B8', display: 'block', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                                        <span style={{ color: '#94A3B8', display: 'block', fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
                                             Articles Commandés ({order.items?.length || 0})
                                         </span>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                             {order.items && order.items.length > 0 ? (
                                                 order.items.map((item, idx) => (
-                                                    <div key={idx} style={{ fontSize: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', padding: '8px 10px', borderRadius: '8px' }}>
+                                                    <div key={idx} style={{ fontSize: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', padding: '6px 8px', borderRadius: '6px' }}>
                                                         <div style={{ fontWeight: '700', color: '#0F172A' }}>
                                                             {item.name || item.product?.name || 'Produit'} 
                                                             <span style={{ color: '#4F46E5', marginLeft: '6px' }}>x{item.quantity}</span>
@@ -272,14 +279,14 @@ export default function OrdersDashboard() {
                                                             Prix unit: <strong>{item.price} DZD</strong>
                                                         </div>
                                                         {(item.color || item.size) && (
-                                                            <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+                                                            <div style={{ display: 'flex', gap: '4px', marginTop: '4px', flexWrap: 'wrap' }}>
                                                                 {item.color && (
-                                                                    <span style={{ backgroundColor: '#E0F2FE', color: '#0369A1', padding: '1px 6px', borderRadius: '4px', fontWeight: '700', fontSize: '10px' }}>
+                                                                    <span style={{ backgroundColor: '#E0F2FE', color: '#0369A1', padding: '1px 5px', borderRadius: '4px', fontWeight: '700', fontSize: '10px' }}>
                                                                         {item.color}
                                                                     </span>
                                                                 )}
                                                                 {item.size && (
-                                                                    <span style={{ backgroundColor: '#F1F5F9', color: '#334155', padding: '1px 6px', borderRadius: '4px', fontWeight: '700', fontSize: '10px' }}>
+                                                                    <span style={{ backgroundColor: '#F1F5F9', color: '#334155', padding: '1px 5px', borderRadius: '4px', fontWeight: '700', fontSize: '10px' }}>
                                                                         Taille: {item.size}
                                                                     </span>
                                                                 )}
@@ -288,31 +295,31 @@ export default function OrdersDashboard() {
                                                     </div>
                                                 ))
                                             ) : (
-                                                <span style={{ color: '#94A3B8', fontSize: '12px' }}>Aucun article</span>
+                                                <span style={{ color: '#94A3B8', fontSize: '11px' }}>Aucun article</span>
                                             )}
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Status Control Toolbar */}
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#F8FAFC', padding: '12px 16px', borderRadius: '8px', border: '1px solid #F1F5F9' }}>
-                                    <span style={{ fontSize: '12px', fontWeight: '600', color: '#64748B' }}>
+                                {/* Mobile-Responsive Status Action Bar */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#F8FAFC', padding: '10px 12px', borderRadius: '8px', border: '1px solid #F1F5F9' }}>
+                                    <span style={{ fontSize: '11px', fontWeight: '700', color: '#64748B' }}>
                                         Mettre à jour le statut :
                                     </span>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', width: '100%' }}>
                                         {activeStatus === 'Pending_Confirmation' && (
                                             <>
                                                 <button
                                                     disabled={updatingId === order._id}
                                                     onClick={() => handleStatusChange(order._id, 'Confirmed')}
-                                                    style={{ padding: '7px 14px', backgroundColor: '#4F46E5', color: '#FFF', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                    style={{ flex: '1 1 120px', padding: '8px 12px', backgroundColor: '#4F46E5', color: '#FFF', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
                                                 >
                                                     Confirmée
                                                 </button>
                                                 <button
                                                     disabled={updatingId === order._id}
                                                     onClick={() => handleStatusChange(order._id, 'Cancelled')}
-                                                    style={{ padding: '7px 14px', backgroundColor: '#F1F5F9', color: '#64748B', border: '1px solid #CBD5E1', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                    style={{ flex: '1 1 120px', padding: '8px 12px', backgroundColor: '#FFFFFF', color: '#64748B', border: '1px solid #CBD5E1', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
                                                 >
                                                     Annuler
                                                 </button>
@@ -323,7 +330,7 @@ export default function OrdersDashboard() {
                                             <button
                                                 disabled={updatingId === order._id}
                                                 onClick={() => handleStatusChange(order._id, 'Shipped')}
-                                                style={{ padding: '7px 14px', backgroundColor: '#0284C7', color: '#FFF', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                style={{ flex: '1 1 100%', padding: '8px 12px', backgroundColor: '#0284C7', color: '#FFF', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
                                             >
                                                 🚚 Passer en Expédiée
                                             </button>
@@ -334,14 +341,14 @@ export default function OrdersDashboard() {
                                                 <button
                                                     disabled={updatingId === order._id}
                                                     onClick={() => handleStatusChange(order._id, 'Completed')}
-                                                    style={{ padding: '7px 14px', backgroundColor: '#059669', color: '#FFF', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                    style={{ flex: '1 1 120px', padding: '8px 12px', backgroundColor: '#059669', color: '#FFF', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
                                                 >
                                                     Livrée & Payée
                                                 </button>
                                                 <button
                                                     disabled={updatingId === order._id}
                                                     onClick={() => handleStatusChange(order._id, 'Retour')}
-                                                    style={{ padding: '7px 14px', backgroundColor: '#DC2626', color: '#FFF', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                                    style={{ flex: '1 1 120px', padding: '8px 12px', backgroundColor: '#DC2626', color: '#FFF', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
                                                 >
                                                     Retour (Refusée)
                                                 </button>

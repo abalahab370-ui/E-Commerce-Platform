@@ -205,47 +205,47 @@ export default function ProductManagement() {
     };
 
     return (
-        <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '40px 32px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', color: '#0F172A', backgroundColor: '#F9FAFB', minHeight: '100vh' }}>
+        <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '16px 12px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', color: '#0F172A', backgroundColor: '#F9FAFB', minHeight: '100vh', boxSizing: 'border-box', width: '100%' }}>
             
             {/* Header Area */}
-            <div style={{ marginBottom: '36px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                    <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#0F172A', margin: 0, letterSpacing: '-0.025em' }}>
+                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', margin: 0, letterSpacing: '-0.025em' }}>
                         Gestion des Produits
                     </h1>
-                    <p style={{ fontSize: '15px', color: '#64748B', margin: '6px 0 0 0' }}>
+                    <p style={{ fontSize: '14px', color: '#64748B', margin: '4px 0 0 0' }}>
                         Ajoutez, modifiez et gérez les photos et stocks de votre catalogue.
                     </p>
                 </div>
             </div>
 
             {error && (
-                <div style={{ padding: '16px 20px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', borderRadius: '12px', marginBottom: '32px', fontSize: '14px', fontWeight: '500' }}>
+                <div style={{ padding: '12px 16px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', borderRadius: '12px', marginBottom: '24px', fontSize: '14px', fontWeight: '500' }}>
                     ⚠️ {error}
                 </div>
             )}
 
-            {/* Main Form Container - Spacious Uncrowded Layout */}
-            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '32px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', marginBottom: '40px' }}>
+            {/* Main Form Container */}
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '20px 16px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', marginBottom: '32px', boxSizing: 'border-box' }}>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px', borderBottom: '1px solid #F3F4F6', paddingBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '24px', borderBottom: '1px solid #F3F4F6', paddingBottom: '16px' }}>
                     <div>
                         <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#0F172A', margin: 0 }}>
                             {editingProduct ? 'Modifier le Produit' : 'Créer un Nouveau Produit'}
                         </h2>
-                        <span style={{ fontSize: '13px', color: '#64748B' }}>
+                        <span style={{ fontSize: '12px', color: '#64748B', wordBreak: 'break-all' }}>
                             {editingProduct ? `ID: #${editingProduct._id}` : 'Remplissez les détails ci-dessous'}
                         </span>
                     </div>
 
                     {!editingProduct && (
-                        <div style={{ display: 'flex', gap: '6px', backgroundColor: '#F3F4F6', padding: '4px', borderRadius: '10px' }}>
+                        <div style={{ display: 'flex', gap: '4px', backgroundColor: '#F3F4F6', padding: '4px', borderRadius: '10px', flexWrap: 'wrap' }}>
                             <button
                                 type="button"
                                 onClick={() => setIsVariantProduct(false)}
                                 style={{
-                                    padding: '8px 18px',
-                                    fontSize: '13px',
+                                    padding: '8px 14px',
+                                    fontSize: '12px',
                                     fontWeight: '600',
                                     borderRadius: '8px',
                                     border: 'none',
@@ -261,8 +261,8 @@ export default function ProductManagement() {
                                 type="button"
                                 onClick={() => setIsVariantProduct(true)}
                                 style={{
-                                    padding: '8px 18px',
-                                    fontSize: '13px',
+                                    padding: '8px 14px',
+                                    fontSize: '12px',
                                     fontWeight: '600',
                                     borderRadius: '8px',
                                     border: 'none',
@@ -278,12 +278,12 @@ export default function ProductManagement() {
                     )}
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     
-                    {/* Top Row: Basic Info */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '24px' }}>
+                    {/* Responsive Grid for Basic Info */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
                         <div>
-                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '8px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '6px' }}>
                                 Nom du produit <span style={{ color: '#EF4444' }}>*</span>
                             </label>
                             <input 
@@ -293,12 +293,12 @@ export default function ProductManagement() {
                                 onChange={handleInputChange}
                                 required
                                 placeholder="ex: Veste Homme en Cuir Premium"
-                                style={{ width: '100%', padding: '12px 16px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '10px 14px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
                             />
                         </div>
 
                         <div>
-                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '8px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '6px' }}>
                                 Catégorie <span style={{ color: '#EF4444' }}>*</span>
                             </label>
                             <select
@@ -306,7 +306,7 @@ export default function ProductManagement() {
                                 value={formData.category}
                                 onChange={handleInputChange}
                                 required
-                                style={{ width: '100%', padding: '12px 16px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF' }}
+                                style={{ width: '100%', padding: '10px 14px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', backgroundColor: '#FFFFFF' }}
                             >
                                 <option value="">Sélectionner...</option>
                                 {categories.map((cat) => (
@@ -316,7 +316,7 @@ export default function ProductManagement() {
                         </div>
 
                         <div>
-                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '8px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '6px' }}>
                                 Prix (DZD) <span style={{ color: '#EF4444' }}>*</span>
                             </label>
                             <input 
@@ -328,15 +328,15 @@ export default function ProductManagement() {
                                 onChange={handleInputChange}
                                 required
                                 placeholder="4500"
-                                style={{ width: '100%', padding: '12px 16px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '10px 14px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
                             />
                         </div>
                     </div>
 
                     {/* Stock & Variant Section */}
                     {!isVariantProduct ? (
-                        <div style={{ maxWidth: '300px' }}>
-                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '8px' }}>
+                        <div style={{ maxWidth: '300px', width: '100%' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '6px' }}>
                                 Quantité en Stock
                             </label>
                             <input 
@@ -348,38 +348,38 @@ export default function ProductManagement() {
                                 onChange={handleInputChange}
                                 required
                                 placeholder="10"
-                                style={{ width: '100%', padding: '12px 16px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '10px 14px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
                             />
                         </div>
                     ) : (
-                        <div style={{ backgroundColor: '#F9FAFB', padding: '24px', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <label style={{ fontSize: '14px', fontWeight: '700', color: '#111827' }}>Variantes (Couleurs & Tailles)</label>
+                        <div style={{ backgroundColor: '#F9FAFB', padding: '16px', borderRadius: '12px', border: '1px solid #E5E7EB', boxSizing: 'border-box' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+                                <label style={{ fontSize: '13px', fontWeight: '700', color: '#111827' }}>Variantes (Couleurs & Tailles)</label>
                                 <button 
                                     type="button" 
                                     onClick={addVariantRow}
-                                    style={{ padding: '8px 16px', backgroundColor: '#4F46E5', color: '#FFF', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '13px' }}
+                                    style={{ padding: '6px 12px', backgroundColor: '#4F46E5', color: '#FFF', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '12px' }}
                                 >
                                     + Ajouter une Variante
                                 </button>
                             </div>
                             
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                 {variants.map((v, i) => (
-                                    <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                                    <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
                                         <input 
                                             type="text" 
                                             placeholder="Couleur (ex: Noir)" 
                                             value={v.color} 
                                             onChange={(e) => handleVariantChange(i, 'color', e.target.value)}
-                                            style={{ flex: 2, padding: '10px 14px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '8px' }}
+                                            style={{ flex: '1 1 120px', minWidth: '0', padding: '8px 12px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '8px', boxSizing: 'border-box' }}
                                         />
                                         <input 
                                             type="text" 
                                             placeholder="Taille (ex: XL)" 
                                             value={v.size} 
                                             onChange={(e) => handleVariantChange(i, 'size', e.target.value)}
-                                            style={{ flex: 2, padding: '10px 14px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '8px' }}
+                                            style={{ flex: '1 1 120px', minWidth: '0', padding: '8px 12px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '8px', boxSizing: 'border-box' }}
                                         />
                                         <input 
                                             type="number" 
@@ -387,13 +387,13 @@ export default function ProductManagement() {
                                             min="0"
                                             value={v.stock} 
                                             onChange={(e) => handleVariantChange(i, 'stock', e.target.value)}
-                                            style={{ flex: 1, padding: '10px 14px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '8px' }}
+                                            style={{ flex: '1 1 70px', minWidth: '0', padding: '8px 12px', fontSize: '13px', border: '1px solid #D1D5DB', borderRadius: '8px', boxSizing: 'border-box' }}
                                         />
                                         {variants.length > 1 && (
                                             <button 
                                                 type="button" 
                                                 onClick={() => removeVariantRow(i)} 
-                                                style={{ color: '#EF4444', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '18px', padding: '4px 8px' }}
+                                                style={{ color: '#EF4444', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '18px', padding: '4px 8px', flexShrink: 0 }}
                                             >
                                                 ✕
                                             </button>
@@ -406,43 +406,43 @@ export default function ProductManagement() {
 
                     {/* Description Area */}
                     <div>
-                        <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '8px' }}>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '6px' }}>
                             Description Complète
                         </label>
                         <textarea 
                             name="description"
                             value={formData.description}
                             onChange={handleInputChange}
-                            rows="4"
+                            rows="3"
                             placeholder="Décrivez les caractéristiques, matières, et détails de livraison du produit..."
-                            style={{ width: '100%', padding: '12px 16px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', resize: 'vertical' }}
+                            style={{ width: '100%', padding: '10px 14px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box', resize: 'vertical' }}
                         />
                     </div>
 
-                    {/* LARGE IMAGE PREVIEW DISPLAY AREA */}
-                    <div style={{ backgroundColor: '#F9FAFB', border: '1px dashed #D1D5DB', padding: '24px', borderRadius: '12px' }}>
-                        <label style={{ display: 'block', fontSize: '14px', fontWeight: '700', color: '#111827', marginBottom: '6px' }}>
+                    {/* Image Upload & Preview Area */}
+                    <div style={{ backgroundColor: '#F9FAFB', border: '1px dashed #D1D5DB', padding: '16px', borderRadius: '12px', boxSizing: 'border-box' }}>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#111827', marginBottom: '4px' }}>
                             Galerie Photos du Produit
                         </label>
-                        <p style={{ fontSize: '13px', color: '#64748B', margin: '0 0 16px 0' }}>
+                        <p style={{ fontSize: '12px', color: '#64748B', margin: '0 0 14px 0' }}>
                             Téléchargez des images haute résolution. La première image servira de couverture.
                         </p>
 
-                        {/* Existing Photos Grid - Big Cards */}
+                        {/* Existing Photos Grid */}
                         {editingProduct && existingImages.length > 0 && (
-                            <div style={{ marginBottom: '20px' }}>
-                                <span style={{ fontSize: '12px', fontWeight: '700', color: '#4B5563', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '12px' }}>
+                            <div style={{ marginBottom: '16px' }}>
+                                <span style={{ fontSize: '11px', fontWeight: '700', color: '#4B5563', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '8px' }}>
                                     Images Actuelles
                                 </span>
-                                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                                     {existingImages.map((img, index) => (
                                         <div 
                                             key={img.publicId || index} 
                                             style={{ 
                                                 position: 'relative', 
-                                                width: '130px', 
-                                                height: '130px', 
-                                                borderRadius: '12px', 
+                                                width: '100px', 
+                                                height: '100px', 
+                                                borderRadius: '10px', 
                                                 border: index === 0 ? '3px solid #4F46E5' : '1px solid #E5E7EB', 
                                                 overflow: 'hidden',
                                                 backgroundColor: '#FFFFFF',
@@ -452,14 +452,14 @@ export default function ProductManagement() {
                                             <img src={img.url} alt="Aperçu" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
 
                                             {index === 0 ? (
-                                                <span style={{ position: 'absolute', top: '6px', left: '6px', backgroundColor: '#4F46E5', color: '#FFF', fontSize: '10px', fontWeight: '800', padding: '2px 6px', borderRadius: '4px' }}>
+                                                <span style={{ position: 'absolute', top: '4px', left: '4px', backgroundColor: '#4F46E5', color: '#FFF', fontSize: '9px', fontWeight: '800', padding: '2px 4px', borderRadius: '4px' }}>
                                                     Principale
                                                 </span>
                                             ) : (
                                                 <button
                                                     type="button"
                                                     onClick={() => handleSetMainImage(index)}
-                                                    style={{ position: 'absolute', bottom: '6px', left: '6px', right: '6px', backgroundColor: 'rgba(15, 23, 42, 0.85)', color: '#FFF', border: 'none', fontSize: '10px', fontWeight: '600', padding: '4px 0', borderRadius: '4px', cursor: 'pointer' }}
+                                                    style={{ position: 'absolute', bottom: '4px', left: '4px', right: '4px', backgroundColor: 'rgba(15, 23, 42, 0.85)', color: '#FFF', border: 'none', fontSize: '9px', fontWeight: '600', padding: '3px 0', borderRadius: '4px', cursor: 'pointer' }}
                                                 >
                                                     Définir Principale
                                                 </button>
@@ -468,7 +468,7 @@ export default function ProductManagement() {
                                             <button 
                                                 type="button" 
                                                 onClick={() => handleRemoveExistingImage(img.publicId)}
-                                                style={{ position: 'absolute', top: 6, right: 6, backgroundColor: '#EF4444', color: '#FFF', border: 'none', borderRadius: '50%', width: '22px', height: '22px', fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}
+                                                style={{ position: 'absolute', top: 4, right: 4, backgroundColor: '#EF4444', color: '#FFF', border: 'none', borderRadius: '50%', width: '20px', height: '20px', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}
                                             >
                                                 ✕
                                             </button>
@@ -483,17 +483,17 @@ export default function ProductManagement() {
                             accept="image/*"
                             multiple 
                             onChange={handleFileChange}
-                            style={{ fontSize: '13px', color: '#374151' }}
+                            style={{ fontSize: '12px', color: '#374151', width: '100%' }}
                         />
                     </div>
 
                     {/* Action Bar */}
-                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid #F3F4F6' }}>
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap', paddingTop: '12px', borderTop: '1px solid #F3F4F6' }}>
                         {editingProduct && (
                             <button
                                 type="button"
                                 onClick={resetForm}
-                                style={{ padding: '12px 24px', backgroundColor: '#FFFFFF', color: '#4B5563', border: '1px solid #D1D5DB', borderRadius: '10px', fontWeight: '600', fontSize: '14px', cursor: 'pointer' }}
+                                style={{ flex: '1 1 100px', padding: '10px 18px', backgroundColor: '#FFFFFF', color: '#4B5563', border: '1px solid #D1D5DB', borderRadius: '10px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}
                             >
                                 Annuler
                             </button>
@@ -501,7 +501,7 @@ export default function ProductManagement() {
                         <button
                             type="submit"
                             disabled={submitting}
-                            style={{ padding: '12px 32px', backgroundColor: '#4F46E5', color: '#FFFFFF', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', boxShadow: '0 1px 2px rgba(79, 70, 229, 0.2)' }}
+                            style={{ flex: '1 1 160px', padding: '10px 24px', backgroundColor: '#4F46E5', color: '#FFFFFF', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', boxShadow: '0 1px 2px rgba(79, 70, 229, 0.2)' }}
                         >
                             {submitting ? 'Enregistrement...' : editingProduct ? 'Mettre à jour le Produit' : 'Créer le Produit'}
                         </button>
@@ -510,36 +510,36 @@ export default function ProductManagement() {
                 </form>
             </div>
 
-            {/* SPACIOUS TABLE LIST */}
-            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '32px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            {/* Inventory Table Container */}
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '20px 16px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
                     <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#0F172A', margin: 0 }}>
                         Inventaire Actuel
                     </h2>
-                    <span style={{ fontSize: '13px', fontWeight: '600', backgroundColor: '#F3F4F6', color: '#4B5563', padding: '6px 14px', borderRadius: '20px' }}>
+                    <span style={{ fontSize: '12px', fontWeight: '600', backgroundColor: '#F3F4F6', color: '#4B5563', padding: '4px 12px', borderRadius: '20px' }}>
                         {products.length} articles au total
                     </span>
                 </div>
 
                 {loading ? (
-                    <div style={{ padding: '60px', textAlign: 'center', color: '#64748B', fontSize: '14px' }}>
+                    <div style={{ padding: '40px 16px', textAlign: 'center', color: '#64748B', fontSize: '14px' }}>
                         Chargement des données...
                     </div>
                 ) : products.length === 0 ? (
-                    <div style={{ padding: '60px', textAlign: 'center', color: '#9CA3AF', fontSize: '14px' }}>
+                    <div style={{ padding: '40px 16px', textAlign: 'center', color: '#9CA3AF', fontSize: '14px' }}>
                         Aucun produit enregistré.
                     </div>
                 ) : (
-                    <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                    <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px', minWidth: '600px' }}>
                             <thead>
                                 <tr style={{ backgroundColor: '#F9FAFB', borderBottom: '1px solid #E5E7EB', color: '#4B5563' }}>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700' }}>Photo</th>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700' }}>Désignation</th>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700' }}>Catégorie</th>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700' }}>Prix</th>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700' }}>Disponible</th>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700', textAlign: 'right' }}>Actions</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700' }}>Photo</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700' }}>Désignation</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700' }}>Catégorie</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700' }}>Prix</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700' }}>Disponible</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700', textAlign: 'right' }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -547,43 +547,45 @@ export default function ProductManagement() {
                                     const stockCount = getDisplayStock(item);
                                     return (
                                         <tr key={item._id} style={{ borderBottom: '1px solid #F3F4F6' }}>
-                                            <td style={{ padding: '16px 20px' }}>
+                                            <td style={{ padding: '12px 14px' }}>
                                                 {item.images && item.images.length > 0 ? (
-                                                    <img src={item.images[0].url} alt={item.name} style={{ width: '64px', height: '64px', objectFit: 'cover', borderRadius: '10px', border: '1px solid #E5E7EB' }} />
+                                                    <img src={item.images[0].url} alt={item.name} style={{ width: '52px', height: '52px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #E5E7EB' }} />
                                                 ) : (
-                                                    <div style={{ width: '64px', height: '64px', backgroundColor: '#F3F4F6', borderRadius: '10px', border: '1px dashed #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#9CA3AF' }}>
+                                                    <div style={{ width: '52px', height: '52px', backgroundColor: '#F3F4F6', borderRadius: '8px', border: '1px dashed #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#9CA3AF' }}>
                                                         Pas d'img
                                                     </div>
                                                 )}
                                             </td>
-                                            <td style={{ padding: '16px 20px' }}>
-                                                <div style={{ fontWeight: '700', color: '#0F172A', fontSize: '15px' }}>{item.name}</div>
+                                            <td style={{ padding: '12px 14px' }}>
+                                                <div style={{ fontWeight: '700', color: '#0F172A', fontSize: '14px' }}>{item.name}</div>
                                                 {item.hasVariants && (
-                                                    <div style={{ fontSize: '12px', color: '#4F46E5', fontWeight: '600', marginTop: '4px' }}>
+                                                    <div style={{ fontSize: '11px', color: '#4F46E5', fontWeight: '600', marginTop: '2px' }}>
                                                         {item.variants?.length || 0} variante(s) configurée(s)
                                                     </div>
                                                 )}
                                             </td>
-                                            <td style={{ padding: '16px 20px', color: '#4B5563' }}>{item.category?.name || 'Non classé'}</td>
-                                            <td style={{ padding: '16px 20px', fontWeight: '700', color: '#059669', fontSize: '15px' }}>{item.price} DZD</td>
-                                            <td style={{ padding: '16px 20px' }}>
-                                                <span style={{ padding: '4px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: '700', backgroundColor: stockCount > 0 ? '#ECFDF5' : '#FEF2F2', color: stockCount > 0 ? '#047857' : '#B91C1C', border: `1px solid ${stockCount > 0 ? '#A7F3D0' : '#FCA5A5'}` }}>
+                                            <td style={{ padding: '12px 14px', color: '#4B5563' }}>{item.category?.name || 'Non classé'}</td>
+                                            <td style={{ padding: '12px 14px', fontWeight: '700', color: '#059669', fontSize: '14px' }}>{item.price} DZD</td>
+                                            <td style={{ padding: '12px 14px' }}>
+                                                <span style={{ padding: '3px 10px', borderRadius: '16px', fontSize: '11px', fontWeight: '700', backgroundColor: stockCount > 0 ? '#ECFDF5' : '#FEF2F2', color: stockCount > 0 ? '#047857' : '#B91C1C', border: `1px solid ${stockCount > 0 ? '#A7F3D0' : '#FCA5A5'}` }}>
                                                     {stockCount} unités
                                                 </span>
                                             </td>
-                                            <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                                                <button
-                                                    onClick={() => handleEditClick(item)}
-                                                    style={{ padding: '8px 16px', backgroundColor: '#FFFFFF', border: '1px solid #D1D5DB', color: '#374151', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600', marginRight: '8px' }}
-                                                >
-                                                    Éditer
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(item._id)}
-                                                    style={{ padding: '8px 16px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#B91C1C', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600' }}
-                                                >
-                                                    Supprimer
-                                                </button>
+                                            <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                                                <div style={{ display: 'inline-flex', gap: '6px' }}>
+                                                    <button
+                                                        onClick={() => handleEditClick(item)}
+                                                        style={{ padding: '6px 12px', backgroundColor: '#FFFFFF', border: '1px solid #D1D5DB', color: '#374151', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}
+                                                    >
+                                                        Éditer
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(item._id)}
+                                                        style={{ padding: '6px 12px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#B91C1C', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     );

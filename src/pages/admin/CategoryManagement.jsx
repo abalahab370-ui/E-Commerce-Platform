@@ -127,34 +127,34 @@ export default function CategoryManagement() {
     };
 
     return (
-        <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '40px 32px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', color: '#0F172A', backgroundColor: '#F9FAFB', minHeight: '100vh' }}>
+        <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '16px 12px', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', color: '#0F172A', backgroundColor: '#F9FAFB', minHeight: '100vh', boxSizing: 'border-box', width: '100%' }}>
             
-            <div style={{ marginBottom: '36px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#0F172A', margin: 0, letterSpacing: '-0.025em' }}>
+            <div style={{ marginBottom: '24px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', margin: 0, letterSpacing: '-0.025em' }}>
                     Gestion des Catégories
                 </h1>
-                <p style={{ fontSize: '15px', color: '#64748B', margin: '6px 0 0 0' }}>
+                <p style={{ fontSize: '14px', color: '#64748B', margin: '4px 0 0 0' }}>
                     Créez des rayons et configurez les bannières promotionnelles de votre boutique.
                 </p>
             </div>
 
             {error && (
-                <div style={{ padding: '16px 20px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', borderRadius: '12px', marginBottom: '32px', fontSize: '14px' }}>
+                <div style={{ padding: '12px 16px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#991B1B', borderRadius: '12px', marginBottom: '24px', fontSize: '14px', fontWeight: '500' }}>
                     ⚠️ {error}
                 </div>
             )}
 
-            {/* SPACIOUS FORM CARD */}
-            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '32px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', marginBottom: '40px' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#0F172A', margin: '0 0 24px 0', borderBottom: '1px solid #F3F4F6', paddingBottom: '16px' }}>
+            {/* RESPONSIVE FORM CARD */}
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '20px 16px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', marginBottom: '32px', boxSizing: 'border-box' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#0F172A', margin: '0 0 20px 0', borderBottom: '1px solid #F3F4F6', paddingBottom: '16px' }}>
                     {editingCategory ? 'Modifier la Catégorie' : 'Ajouter une Nouvelle Catégorie'}
                 </h2>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
                         <div>
-                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '8px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '6px' }}>
                                 Nom de la catégorie <span style={{ color: '#EF4444' }}>*</span>
                             </label>
                             <input 
@@ -164,12 +164,12 @@ export default function CategoryManagement() {
                                 onChange={handleInputChange}
                                 required
                                 placeholder="ex: Électronique & High-Tech"
-                                style={{ width: '100%', padding: '12px 16px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '10px 14px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
                             />
                         </div>
 
                         <div>
-                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '8px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#374151', marginBottom: '6px' }}>
                                 Description
                             </label>
                             <input 
@@ -178,27 +178,27 @@ export default function CategoryManagement() {
                                 value={formData.description}
                                 onChange={handleInputChange}
                                 placeholder="Courte introduction de la catégorie..."
-                                style={{ width: '100%', padding: '12px 16px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '10px 14px', border: '1px solid #D1D5DB', borderRadius: '10px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
                             />
                         </div>
                     </div>
 
                     {/* BANNER CONFIGURATION BOX */}
-                    <div style={{ backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB', padding: '24px', borderRadius: '12px' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontSize: '14px', fontWeight: '700', color: '#0F172A' }}>
+                    <div style={{ backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB', padding: '16px', borderRadius: '12px', boxSizing: 'border-box' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '14px', fontWeight: '700', color: '#0F172A' }}>
                             <input 
                                 type="checkbox"
                                 name="isFeatured"
                                 checked={formData.isFeatured}
                                 onChange={handleInputChange}
-                                style={{ width: '20px', height: '20px', accentColor: '#4F46E5', cursor: 'pointer' }}
+                                style={{ width: '18px', height: '18px', accentColor: '#4F46E5', cursor: 'pointer', flexShrink: 0 }}
                             />
                             Mettre en Vedette (Bannière Hero sur l'Accueil)
                         </label>
 
                         {formData.isFeatured && (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginTop: '20px', paddingTop: '20px', borderTop: '1px stroke #E5E7EB' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #E5E7EB' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                                     <div>
                                         <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#4B5563', marginBottom: '6px' }}>Titre de la bannière</label>
                                         <input 
@@ -243,14 +243,14 @@ export default function CategoryManagement() {
                                         type="file" 
                                         accept="image/*"
                                         onChange={handleFileChange}
-                                        style={{ fontSize: '13px', width: '100%', color: '#374151', marginBottom: '12px' }}
+                                        style={{ fontSize: '12px', width: '100%', color: '#374151', marginBottom: '12px' }}
                                     />
                                     {imagePreview ? (
                                         <div style={{ width: '100%', height: '160px', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB', position: 'relative' }}>
                                             <img src={imagePreview} alt="Aperçu Bannière" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </div>
                                     ) : (
-                                        <div style={{ width: '100%', height: '160px', borderRadius: '10px', border: '2px dashed #D1D5DB', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF', fontSize: '13px' }}>
+                                        <div style={{ width: '100%', height: '160px', borderRadius: '10px', border: '2px dashed #D1D5DB', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF', fontSize: '12px' }}>
                                             Aucune image sélectionnée
                                         </div>
                                     )}
@@ -259,12 +259,12 @@ export default function CategoryManagement() {
                         )}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap', paddingTop: '12px', borderTop: '1px solid #F3F4F6' }}>
                         {editingCategory && (
                             <button
                                 type="button"
                                 onClick={resetForm}
-                                style={{ padding: '12px 24px', backgroundColor: '#FFFFFF', color: '#4B5563', border: '1px solid #D1D5DB', borderRadius: '10px', fontWeight: '600', fontSize: '14px', cursor: 'pointer' }}
+                                style={{ flex: '1 1 100px', padding: '10px 18px', backgroundColor: '#FFFFFF', color: '#4B5563', border: '1px solid #D1D5DB', borderRadius: '10px', fontWeight: '600', fontSize: '13px', cursor: 'pointer' }}
                             >
                                 Annuler
                             </button>
@@ -272,7 +272,7 @@ export default function CategoryManagement() {
                         <button
                             type="submit"
                             disabled={submitting}
-                            style={{ padding: '12px 32px', backgroundColor: '#4F46E5', color: '#FFFFFF', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '14px', cursor: 'pointer' }}
+                            style={{ flex: '1 1 160px', padding: '10px 24px', backgroundColor: '#4F46E5', color: '#FFFFFF', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', boxShadow: '0 1px 2px rgba(79, 70, 229, 0.2)' }}
                         >
                             {submitting ? 'Enregistrement...' : editingCategory ? 'Mettre à jour' : 'Créer la Catégorie'}
                         </button>
@@ -281,67 +281,69 @@ export default function CategoryManagement() {
                 </form>
             </div>
 
-            {/* SPACIOUS LIST TABLE */}
-            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '32px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#0F172A', margin: '0 0 24px 0' }}>
+            {/* RESPONSIVE LIST TABLE */}
+            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '16px', padding: '20px 16px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', boxSizing: 'border-box' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#0F172A', margin: '0 0 20px 0' }}>
                     Catégories de la Boutique
                 </h2>
 
                 {loading ? (
-                    <div style={{ padding: '60px', textAlign: 'center', color: '#64748B' }}>Chargement...</div>
+                    <div style={{ padding: '40px 16px', textAlign: 'center', color: '#64748B', fontSize: '14px' }}>Chargement...</div>
                 ) : categories.length === 0 ? (
-                    <div style={{ padding: '60px', textAlign: 'center', color: '#9CA3AF' }}>Aucune catégorie configurée.</div>
+                    <div style={{ padding: '40px 16px', textAlign: 'center', color: '#9CA3AF', fontSize: '14px' }}>Aucune catégorie configurée.</div>
                 ) : (
-                    <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                    <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px', minWidth: '600px' }}>
                             <thead>
                                 <tr style={{ backgroundColor: '#F9FAFB', borderBottom: '1px solid #E5E7EB', color: '#4B5563' }}>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700' }}>Bannière Image</th>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700' }}>Nom & Description</th>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700' }}>Mise en Vedette</th>
-                                    <th style={{ padding: '16px 20px', fontWeight: '700', textAlign: 'right' }}>Actions</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700' }}>Bannière Image</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700' }}>Nom & Description</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700' }}>Mise en Vedette</th>
+                                    <th style={{ padding: '12px 14px', fontWeight: '700', textAlign: 'right' }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {categories.map((cat) => (
                                     <tr key={cat._id} style={{ borderBottom: '1px solid #F3F4F6' }}>
-                                        <td style={{ padding: '16px 20px' }}>
+                                        <td style={{ padding: '12px 14px' }}>
                                             {cat.bannerImage ? (
-                                                <img src={cat.bannerImage} alt={cat.name} style={{ width: '90px', height: '54px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #E5E7EB' }} />
+                                                <img src={cat.bannerImage} alt={cat.name} style={{ width: '80px', height: '48px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #E5E7EB' }} />
                                             ) : (
-                                                <div style={{ width: '90px', height: '54px', backgroundColor: '#F3F4F6', borderRadius: '8px', border: '1px dashed #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#9CA3AF' }}>
+                                                <div style={{ width: '80px', height: '48px', backgroundColor: '#F3F4F6', borderRadius: '8px', border: '1px dashed #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#9CA3AF' }}>
                                                     Pas de visuel
                                                 </div>
                                             )}
                                         </td>
-                                        <td style={{ padding: '16px 20px' }}>
-                                            <div style={{ fontWeight: '700', color: '#0F172A', fontSize: '15px' }}>{cat.name}</div>
+                                        <td style={{ padding: '12px 14px' }}>
+                                            <div style={{ fontWeight: '700', color: '#0F172A', fontSize: '14px' }}>{cat.name}</div>
                                             {cat.description && (
-                                                <div style={{ fontSize: '13px', color: '#64748B', marginTop: '4px' }}>{cat.description}</div>
+                                                <div style={{ fontSize: '12px', color: '#64748B', marginTop: '2px' }}>{cat.description}</div>
                                             )}
                                         </td>
-                                        <td style={{ padding: '16px 20px' }}>
+                                        <td style={{ padding: '12px 14px' }}>
                                             {cat.isFeatured ? (
-                                                <span style={{ padding: '4px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: '700', backgroundColor: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0' }}>
+                                                <span style={{ padding: '3px 10px', borderRadius: '16px', fontSize: '11px', fontWeight: '700', backgroundColor: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0' }}>
                                                     ⭐ En Vedette
                                                 </span>
                                             ) : (
-                                                <span style={{ fontSize: '13px', color: '#9CA3AF' }}>Standard</span>
+                                                <span style={{ fontSize: '12px', color: '#9CA3AF' }}>Standard</span>
                                             )}
                                         </td>
-                                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                                            <button
-                                                onClick={() => handleEditClick(cat)}
-                                                style={{ padding: '8px 16px', backgroundColor: '#FFFFFF', border: '1px solid #D1D5DB', color: '#374151', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600', marginRight: '8px' }}
-                                            >
-                                                Éditer
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(cat._id)}
-                                                style={{ padding: '8px 16px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#B91C1C', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: '600' }}
-                                            >
-                                                Supprimer
-                                            </button>
+                                        <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                                            <div style={{ display: 'inline-flex', gap: '6px' }}>
+                                                <button
+                                                    onClick={() => handleEditClick(cat)}
+                                                    style={{ padding: '6px 12px', backgroundColor: '#FFFFFF', border: '1px solid #D1D5DB', color: '#374151', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}
+                                                >
+                                                    Éditer
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(cat._id)}
+                                                    style={{ padding: '6px 12px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#B91C1C', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '600' }}
+                                                >
+                                                    Supprimer
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

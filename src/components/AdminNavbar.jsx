@@ -11,7 +11,7 @@ export default function AdminNavbar({ activeTab, setActiveTab, onLogout, onGoToS
         try {
             await fetch('/api/v2/auth/logout', {
                 method: 'DELETE',
-                credentials: 'include' // Ensures cookies are sent with the request
+                credentials: 'include'
             });
         } catch (err) {
             console.error('Erreur lors de la déconnexion:', err);
@@ -21,53 +21,63 @@ export default function AdminNavbar({ activeTab, setActiveTab, onLogout, onGoToS
     };
 
     return (
-        <header style={{ backgroundColor: '#0F172A', color: '#FFF', padding: '0 24px' }}>
-            <div style={{ maxWidth: '1360px', margin: '0 auto', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <header style={{ backgroundColor: '#0F172A', color: '#FFFFFF', borderBottom: '1px solid #1E293B', sticky: 'top', top: 0, zIndex: 50, width: '100%', boxSizing: 'border-box' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 
-                {/* Admin Brand */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-                    <span style={{ fontSize: '18px', fontWeight: '900', letterSpacing: '1px' }}>
-                        STORE<span style={{ color: '#10B981' }}>DZ</span> <span style={{ fontSize: '11px', backgroundColor: '#334155', padding: '3px 8px', borderRadius: '4px', fontWeight: '600' }}>ADMIN</span>
-                    </span>
+                {/* Brand Logo & Global Action Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '18px', fontWeight: '900', color: '#FFFFFF', letterSpacing: '0.5px' }}>
+                            STORE<span style={{ color: '#10B981' }}>DZ</span>
+                        </span>
+                        <span style={{ fontSize: '10px', backgroundColor: '#1E293B', color: '#38BDF8', padding: '2px 6px', borderRadius: '4px', fontWeight: '800', border: '1px solid #334155' }}>
+                            ADMIN
+                        </span>
+                    </div>
 
-                    {/* Navigation Tabs */}
-                    <nav style={{ display: 'flex', gap: '8px' }}>
-                        {tabs.map((tab) => (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button
+                            onClick={onGoToStore}
+                            style={{ padding: '6px 12px', backgroundColor: '#1E293B', color: '#F1F5F9', border: '1px solid #334155', borderRadius: '6px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                        >
+                            Voir la boutique
+                        </button>
+                        <button
+                            onClick={handleLogoutClick}
+                            style={{ padding: '6px 12px', backgroundColor: '#DC2626', color: '#FFFFFF', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}
+                        >
+                            Déconnexion
+                        </button>
+                    </div>
+                </div>
+
+                {/* Mobile-Friendly Scrollable Tab Navigation Bar */}
+                <nav style={{ display: 'flex', gap: '6px', backgroundColor: '#1E293B', padding: '4px', borderRadius: '8px', border: '1px solid #334155', overflowX: 'auto', width: '100%', boxSizing: 'border-box' }}>
+                    {tabs.map((tab) => {
+                        const isActive = activeTab === tab.id;
+                        return (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 style={{
-                                    padding: '10px 16px',
-                                    backgroundColor: activeTab === tab.id ? '#1E293B' : 'transparent',
-                                    color: activeTab === tab.id ? '#10B981' : '#94A3B8',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    fontSize: '13px',
+                                    flex: '1 0 auto',
+                                    padding: '8px 14px',
+                                    backgroundColor: isActive ? '#0F172A' : 'transparent',
+                                    color: isActive ? '#38BDF8' : '#94A3B8',
+                                    border: isActive ? '1px solid #334155' : '1px solid transparent',
+                                    borderRadius: '6px',
+                                    fontSize: '12px',
                                     fontWeight: '700',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap',
+                                    textAlign: 'center'
                                 }}
                             >
                                 {tab.label}
                             </button>
-                        ))}
-                    </nav>
-                </div>
-
-                {/* Right Action Controls */}
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                    <button
-                        onClick={onGoToStore}
-                        style={{ padding: '8px 16px', backgroundColor: '#334155', color: '#FFF', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
-                    >
-                        Voir la boutique
-                    </button>
-                    <button
-                        onClick={handleLogoutClick}
-                        style={{ padding: '8px 16px', backgroundColor: '#EF4444', color: '#FFF', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}
-                    >
-                        Déconnexion
-                    </button>
-                </div>
+                        );
+                    })}
+                </nav>
 
             </div>
         </header>
