@@ -62,7 +62,7 @@ app.get("/ping", rateLimiter , (req, res) => {
 
 
 app.use( (req, res) => {
-  res.status(404).send("Not Found.");
+  return res.status(404).send("Not Found.");
 });
 
 mongoose.connection.once("open" , () => {
