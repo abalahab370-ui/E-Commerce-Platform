@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { api } from '../../services/api';
+import { getOptimizedCloudinaryUrl } from '../../utils/cloudinaryImage';
 
 export default function ProductManagement() {
     const [products, setProducts] = useState([]);
@@ -437,7 +438,7 @@ export default function ProductManagement() {
                                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                                     {existingImages.map((img, index) => (
                                         <div 
-                                            key={img.publicId || index} 
+                                            key={img.publicId || img._id || img.url || `product-image-${index}`} 
                                             style={{ 
                                                 position: 'relative', 
                                                 width: '100px', 
@@ -449,7 +450,7 @@ export default function ProductManagement() {
                                                 boxShadow: '0 2px 4px rgba(0,0,0,0.06)'
                                             }}
                                         >
-                                            <img src={img.url} alt="Aperçu" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <img src={getOptimizedCloudinaryUrl(img.url, 100)} alt="Aperçu" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
 
                                             {index === 0 ? (
                                                 <span style={{ position: 'absolute', top: '4px', left: '4px', backgroundColor: '#4F46E5', color: '#FFF', fontSize: '9px', fontWeight: '800', padding: '2px 4px', borderRadius: '4px' }}>
@@ -549,7 +550,7 @@ export default function ProductManagement() {
                                         <tr key={item._id} style={{ borderBottom: '1px solid #F3F4F6' }}>
                                             <td style={{ padding: '12px 14px' }}>
                                                 {item.images && item.images.length > 0 ? (
-                                                    <img src={item.images[0].url} alt={item.name} style={{ width: '52px', height: '52px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #E5E7EB' }} />
+                                                    <img src={getOptimizedCloudinaryUrl(item.images[0].url, 100)} alt={item.name} loading="lazy" decoding="async" style={{ width: '52px', height: '52px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #E5E7EB' }} />
                                                 ) : (
                                                     <div style={{ width: '52px', height: '52px', backgroundColor: '#F3F4F6', borderRadius: '8px', border: '1px dashed #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#9CA3AF' }}>
                                                         Pas d'img

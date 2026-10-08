@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { api } from '../../services/api';
+import { getOptimizedCloudinaryUrl } from '../../utils/cloudinaryImage';
 
 export default function CategoryManagement() {
     const [categories, setCategories] = useState([]);
@@ -247,7 +248,7 @@ export default function CategoryManagement() {
                                     />
                                     {imagePreview ? (
                                         <div style={{ width: '100%', height: '160px', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB', position: 'relative' }}>
-                                            <img src={imagePreview} alt="Aperçu Bannière" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <img src={getOptimizedCloudinaryUrl(imagePreview, 600)} alt="Aperçu Bannière" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </div>
                                     ) : (
                                         <div style={{ width: '100%', height: '160px', borderRadius: '10px', border: '2px dashed #D1D5DB', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF', fontSize: '12px' }}>
@@ -307,7 +308,7 @@ export default function CategoryManagement() {
                                     <tr key={cat._id} style={{ borderBottom: '1px solid #F3F4F6' }}>
                                         <td style={{ padding: '12px 14px' }}>
                                             {cat.bannerImage ? (
-                                                <img src={cat.bannerImage} alt={cat.name} style={{ width: '80px', height: '48px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #E5E7EB' }} />
+                                                <img src={getOptimizedCloudinaryUrl(cat.bannerImage, 100)} alt={cat.name} loading="lazy" decoding="async" style={{ width: '80px', height: '48px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #E5E7EB' }} />
                                             ) : (
                                                 <div style={{ width: '80px', height: '48px', backgroundColor: '#F3F4F6', borderRadius: '8px', border: '1px dashed #D1D5DB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#9CA3AF' }}>
                                                     Pas de visuel

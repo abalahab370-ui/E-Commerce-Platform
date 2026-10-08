@@ -349,7 +349,7 @@ export default function Checkout({ productId, selectedVariantId, selectedColor, 
                             <div className="flex gap-4 items-center mb-6 pb-6 border-b border-[#222634]">
                                 {product.imageUrl || product.images?.[0] ? (
                                     <div className="w-16 h-16 bg-white rounded-xl overflow-hidden p-1 border border-[#222634] flex-shrink-0 flex items-center justify-center">
-                                        <img src={getOptimizedCloudinaryUrl(product.imageUrl || (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url), 160)} alt={product.name} decoding="async" className="max-w-full max-h-full object-contain" />
+                                        <img src={getOptimizedCloudinaryUrl(product.imageUrl || (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url), 100)} alt={product.name} loading="lazy" decoding="async" className="max-w-full max-h-full object-contain" />
                                     </div>
                                 ) : null}
                                 <div className="flex-1 min-w-0">

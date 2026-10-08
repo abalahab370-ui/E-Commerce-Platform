@@ -11,21 +11,23 @@ export function getOptimizedCloudinaryUrl(imageUrl, width, cropMode = 'limit') {
             return imageUrl;
         }
 
-        // Avoid adding transformations if they already exist
-        if (/\/image\/upload\/f_auto/.test(url.pathname)) {
-            return imageUrl;
-        }
-
         const transformations = ['f_auto', 'q_auto:eco'];
         if (Number.isFinite(width) && width > 0) {
             transformations.push(`w_${Math.round(width)}`);
             if (cropMode) transformations.push(`c_${cropMode}`);
         }
 
-        url.pathname = url.pathname.replace(
-            '/image/upload/',
-            `/image/upload/${transformations.join(',')}/`
-        );
+        const uploadPath = '/image/upload/';
+        const uploadPathIndex = url.pathname.indexOf(uploadPath);
+        const assetPathStart = uploadPathIndex + uploadPath.length;
+        const pathAfterUpload = url.pathname.slice(assetPathStart);
+        const firstPathSegment = pathAfterUpload.split('/')[0];
+        const hasExistingTransformations = /^(?:f_|q_|w_|h_|c_|ar_|dpr_|g_|e_|fl_|t_)/.test(firstPathSegment);
+        const assetPath = hasExistingTransformations
+            ? pathAfterUpload.slice(firstPathSegment.length + 1)
+            : pathAfterUpload;
+
+        url.pathname = `${url.pathname.slice(0, uploadPathIndex)}${uploadPath}${transformations.join(',')}/${assetPath}`;
 
         return url.toString();
     } catch {

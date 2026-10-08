@@ -62,6 +62,7 @@ export default function BentoHero({ categories = [], onSelectCategory }) {
                     <img 
                         src={img1} 
                         alt={tile1.name} 
+                        loading="eager"
                         fetchPriority="high"
                         decoding="async"
                         className="absolute inset-0 w-full h-full object-cover object-center opacity-50 group-hover:scale-105 transition-transform duration-700 ease-out"

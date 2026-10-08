@@ -208,10 +208,27 @@ export default function Catalog({
     const getProductImages = (product) => {
         if (!product) return [];
         if (Array.isArray(product.images) && product.images.length > 0) {
-            return product.images.map(img => typeof img === 'string' ? img : img.url);
+            const imageKeys = new Map();
+            return product.images
+                .map((image, index) => {
+                    const url = typeof image === 'string' ? image : image?.url;
+                    if (!url) return null;
+
+                    const identity = typeof image === 'string'
+                        ? url
+                        : image.publicId || image._id || url;
+                    const occurrence = imageKeys.get(identity) || 0;
+                    imageKeys.set(identity, occurrence + 1);
+
+                    return {
+                        key: occurrence ? `${identity}-${occurrence}` : identity,
+                        url
+                    };
+                })
+                .filter(Boolean);
         }
-        if (product.imageUrl) return [product.imageUrl];
-        return ['/placeholder.png'];
+        if (product.imageUrl) return [{ key: product.imageUrl, url: product.imageUrl }];
+        return [{ key: 'placeholder', url: '/placeholder.png' }];
     };
 
     const modalColors = activeModalProduct?.variants?.length > 0
@@ -315,15 +332,15 @@ export default function Catalog({
                                     <div className="flex flex-col-reverse md:flex-row gap-4">
                                         {images.length > 1 && (
                                             <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto max-h-none md:max-h-[480px] pb-2 md:pb-0">
-                                                {images.map((img, idx) => (
+                                                {images.map((image, idx) => (
                                                     <button 
-                                                        key={idx}
+                                                        key={image.key}
                                                         onClick={() => setSelectedImageIndex(idx)}
                                                         className={`w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${
                                                             selectedImageIndex === idx ? 'border-[#10B981]' : 'border-[#222634] bg-white/5'
                                                         }`}
                                                     >
-                                                        <img src={getOptimizedCloudinaryUrl(img, 160)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                                                        <img src={getOptimizedCloudinaryUrl(image.url, 100)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                                                     </button>
                                                 ))}
                                             </div>
@@ -331,8 +348,9 @@ export default function Catalog({
 
                                         <div className="relative flex-1 bg-white rounded-2xl h-64 sm:h-80 md:h-[440px] flex items-center justify-center p-4 sm:p-6 border border-[#222634] overflow-hidden">
                                             <img 
-                                                src={getOptimizedCloudinaryUrl(images[selectedImageIndex] || images[0], 1200)} 
+                                                src={getOptimizedCloudinaryUrl(images[selectedImageIndex]?.url || images[0]?.url, 600)} 
                                                 alt={activeModalProduct.name} 
+                                                loading="eager"
                                                 decoding="async"
                                                 className="max-w-full max-h-full object-contain" 
                                             />
@@ -554,11 +572,8 @@ export default function Catalog({
                             ) : (
                                 <>
                                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-                                        {products.map((product, index) => {
+                                        {products.map((product) => {
                                             const productImage = product.images?.[0]?.url || product.imageUrl || (typeof product.images?.[0] === 'string' ? product.images[0] : null);
-                                            const productImageSrcSet = [320, 480, 640]
-                                                .map(width => `${getOptimizedCloudinaryUrl(productImage, width)} ${width}w`)
-                                                .join(', ');
 
                                             return (
                                                 <div 
@@ -569,12 +584,9 @@ export default function Catalog({
                                                     <div className="relative bg-white rounded-xl h-36 sm:h-52 flex items-center justify-center p-2 sm:p-4 overflow-hidden mb-2 sm:mb-3 border border-[#1A1D26] shadow-sm">
                                                         {productImage ? (
                                                             <img 
-                                                                src={getOptimizedCloudinaryUrl(productImage, 480)}
-                                                                srcSet={productImage?.includes('/image/upload/') ? productImageSrcSet : undefined}
-                                                                sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 240px"
+                                                                src={getOptimizedCloudinaryUrl(productImage, 350)}
                                                                 alt={product.name} 
-                                                                loading={index === 0 ? 'eager' : 'lazy'}
-                                                                fetchPriority={index === 0 ? 'high' : 'auto'}
+                                                                loading="lazy"
                                                                 decoding="async"
                                                                 className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out" 
                                                             />
@@ -674,7 +686,7 @@ export default function Catalog({
                                 ) : (
                                     cart.map((item) => (
                                         <div key={item.key} className="flex items-center gap-3 bg-[#0D0E14] p-3 rounded-2xl border border-[#222634]">
-                                            <img src={getOptimizedCloudinaryUrl(item.image || '/placeholder.png', 160)} alt={item.name} loading="lazy" decoding="async" className="w-12 h-12 object-cover rounded-xl bg-white/5" />
+                                            <img src={getOptimizedCloudinaryUrl(item.image || '/placeholder.png', 100)} alt={item.name} loading="lazy" decoding="async" className="w-12 h-12 object-cover rounded-xl bg-white/5" />
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
                                                 {(item.color || item.size) && (
