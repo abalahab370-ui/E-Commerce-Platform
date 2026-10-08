@@ -1,4 +1,5 @@
 import React from 'react';
+import { getOptimizedCloudinaryUrl } from '../utils/cloudinaryImage';
 
 // Helper to extract image URL safely from array, object, or string
 const getImageUrl = (bannerImage, fallbackUrl) => {
@@ -48,9 +49,9 @@ export default function BentoHero({ categories = [], onSelectCategory }) {
     };
 
     // Extract resolved image URLs
-    const img1 = getImageUrl(tile1.bannerImage, 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=80');
-    const img2 = getImageUrl(tile2.bannerImage, 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80');
-    const img3 = getImageUrl(tile3.bannerImage, 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80');
+    const img1 = getOptimizedCloudinaryUrl(getImageUrl(tile1.bannerImage, 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1000&q=80'), 1000);
+    const img2 = getOptimizedCloudinaryUrl(getImageUrl(tile2.bannerImage, 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'), 640);
+    const img3 = getOptimizedCloudinaryUrl(getImageUrl(tile3.bannerImage, 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80'), 640);
 
     return (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-2">
@@ -61,6 +62,8 @@ export default function BentoHero({ categories = [], onSelectCategory }) {
                     <img 
                         src={img1} 
                         alt={tile1.name} 
+                        fetchPriority="high"
+                        decoding="async"
                         className="absolute inset-0 w-full h-full object-cover object-center opacity-50 group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/40 to-transparent" />
@@ -94,6 +97,8 @@ export default function BentoHero({ categories = [], onSelectCategory }) {
                     <img 
                         src={img2} 
                         alt={tile2.name} 
+                        loading="lazy"
+                        decoding="async"
                         className="absolute inset-0 w-full h-full object-cover object-center opacity-45 group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/30 to-transparent" />
@@ -116,6 +121,8 @@ export default function BentoHero({ categories = [], onSelectCategory }) {
                     <img 
                         src={img3} 
                         alt={tile3.name} 
+                        loading="lazy"
+                        decoding="async"
                         className="absolute inset-0 w-full h-full object-cover object-center opacity-40 mix-blend-multiply group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/80 via-transparent to-transparent" />

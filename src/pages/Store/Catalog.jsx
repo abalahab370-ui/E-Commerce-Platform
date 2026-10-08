@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Footer from '../../components/Footer';
 import { api } from '../../services/api';
 import BentoHero from '../../components/BentoHero';
+import { getOptimizedCloudinaryUrl } from '../../utils/cloudinaryImage';
 
 export default function Catalog({ 
     onSelectProduct, 
@@ -322,7 +323,7 @@ export default function Catalog({
                                                             selectedImageIndex === idx ? 'border-[#10B981]' : 'border-[#222634] bg-white/5'
                                                         }`}
                                                     >
-                                                        <img src={img} alt="" className="w-full h-full object-cover" />
+                                                        <img src={getOptimizedCloudinaryUrl(img, 160)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                                                     </button>
                                                 ))}
                                             </div>
@@ -330,8 +331,9 @@ export default function Catalog({
 
                                         <div className="relative flex-1 bg-white rounded-2xl h-64 sm:h-80 md:h-[440px] flex items-center justify-center p-4 sm:p-6 border border-[#222634] overflow-hidden">
                                             <img 
-                                                src={images[selectedImageIndex] || images[0]} 
+                                                src={getOptimizedCloudinaryUrl(images[selectedImageIndex] || images[0], 1200)} 
                                                 alt={activeModalProduct.name} 
+                                                decoding="async"
                                                 className="max-w-full max-h-full object-contain" 
                                             />
 
@@ -552,8 +554,11 @@ export default function Catalog({
                             ) : (
                                 <>
                                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-                                        {products.map((product) => {
+                                        {products.map((product, index) => {
                                             const productImage = product.images?.[0]?.url || product.imageUrl || (typeof product.images?.[0] === 'string' ? product.images[0] : null);
+                                            const productImageSrcSet = [320, 480, 640]
+                                                .map(width => `${getOptimizedCloudinaryUrl(productImage, width)} ${width}w`)
+                                                .join(', ');
 
                                             return (
                                                 <div 
@@ -564,8 +569,13 @@ export default function Catalog({
                                                     <div className="relative bg-white rounded-xl h-36 sm:h-52 flex items-center justify-center p-2 sm:p-4 overflow-hidden mb-2 sm:mb-3 border border-[#1A1D26] shadow-sm">
                                                         {productImage ? (
                                                             <img 
-                                                                src={productImage} 
+                                                                src={getOptimizedCloudinaryUrl(productImage, 480)}
+                                                                srcSet={productImage?.includes('/image/upload/') ? productImageSrcSet : undefined}
+                                                                sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 240px"
                                                                 alt={product.name} 
+                                                                loading={index === 0 ? 'eager' : 'lazy'}
+                                                                fetchPriority={index === 0 ? 'high' : 'auto'}
+                                                                decoding="async"
                                                                 className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out" 
                                                             />
                                                         ) : (
@@ -664,7 +674,7 @@ export default function Catalog({
                                 ) : (
                                     cart.map((item) => (
                                         <div key={item.key} className="flex items-center gap-3 bg-[#0D0E14] p-3 rounded-2xl border border-[#222634]">
-                                            <img src={item.image || '/placeholder.png'} alt={item.name} className="w-12 h-12 object-cover rounded-xl bg-white/5" />
+                                            <img src={getOptimizedCloudinaryUrl(item.image || '/placeholder.png', 160)} alt={item.name} loading="lazy" decoding="async" className="w-12 h-12 object-cover rounded-xl bg-white/5" />
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
                                                 {(item.color || item.size) && (
