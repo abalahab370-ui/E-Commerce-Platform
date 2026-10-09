@@ -9,10 +9,17 @@ const whitelist = [
 
 const corsOptions = {
       origin: (origin , callback) => {
-            if (!origin || whitelist.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+            /*if (!origin || whitelist.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
                   callback(null , true)
             } else {
                   callback(new Error('Not allowed by Cors'));
+            }
+            the above code is for development only not for production in production we only allow the whitelisted domains      */
+
+            if (!origin || whitelist.includes(origin)) {
+                  callback(null , true)
+            } else {
+                  callback(new Error('Not allowed by Cors'))
             }
       },
       credentials: true ,

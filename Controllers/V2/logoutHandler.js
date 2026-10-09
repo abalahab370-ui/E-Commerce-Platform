@@ -1,5 +1,6 @@
 const mongoose = require("mongoose") ;
 const Users = require("../../models/users") ;
+const cookieOptions = require('../../config/authCookieOptions');
 
 const logoutHandler = async ( req , res ) => {
       try {
@@ -17,14 +18,14 @@ const logoutHandler = async ( req , res ) => {
             console.log("Found user:", founduser);
 
             if (!founduser) {
-                  res.clearCookie('jwt' , {httpOnly : true , sameSite : 'None' , secure : true}) ;
+                  res.clearCookie('jwt' , cookieOptions) ;
                   return res.status(400).json({ 'message' : 'Ayo mate u dont even exist in my database what hell are u doing here !'})
             }
 
             founduser.refreshToken = '' ;
             await founduser.save() ;
 
-           res.clearCookie('jwt' , {httpOnly : true , sameSite : 'None' , secure : true}) ;
+           res.clearCookie('jwt' , cookieOptions) ;
 
             return res.sendStatus(200) ; // ho9 ho9 well done mate !
 

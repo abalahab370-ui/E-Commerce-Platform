@@ -1,6 +1,7 @@
 const Users = require('../../models/users');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const cookieOptions = require('../../config/authCookieOptions');
 
 const loginHandler = async (req, res) => {
     try {
@@ -46,12 +47,7 @@ const loginHandler = async (req, res) => {
         foundUser.refreshToken = refreshToken;
         await foundUser.save();
 
-        res.cookie('jwt', refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
-            maxAge: 24 * 60 * 60 * 1000
-        });
+        res.cookie('jwt', refreshToken, cookieOptions);
 
         return res.json({ accessToken });
 

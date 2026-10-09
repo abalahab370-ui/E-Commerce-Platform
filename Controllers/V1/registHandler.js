@@ -1,6 +1,7 @@
 const Users = require('../../models/users') ;
 const jwt = require('jsonwebtoken') ;
 const bcrypt = require("bcrypt") ;
+const cookieOptions = require('../../config/authCookieOptions');
 
 
 const registHandler = async (req , res) => {
@@ -44,7 +45,7 @@ const registHandler = async (req , res) => {
                   refreshToken : refreshToken
             })
 
-            res.cookie( 'jwt' , refreshToken , { httpOnly : true , maxAge : 24 * 60 * 60 * 1000})
+            res.cookie( 'jwt' , refreshToken , cookieOptions)
             res.json ({accessToken}) ;
             } catch (err){
 
