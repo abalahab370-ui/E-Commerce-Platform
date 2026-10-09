@@ -1,38 +1,128 @@
-# E-Commerce Admin Dashboard & API
+# STOREDZ E-Commerce Platform
 
-This repository contains the frontend administration panel and backend API integration for managing an e-commerce platform. The project structure and architectural goals align with the standards outlined in the [roadmap.sh E-commerce API project](https://roadmap.sh/projects/ecommerce-api).
+STOREDZ is a full-stack commerce application with a customer-facing storefront and a protected administration area. Customers can browse a product catalog and place guest orders; administrators can manage products, categories, and order status through a React interface backed by a versioned Express API.
 
-## Live Demo
+**Live storefront:** [storedz-ui.onrender.com](https://storedz-ui.onrender.com/)
 
-* **Deployed Application**: [https://storedz-ui.onrender.com/](https://storedz-ui.onrender.com/)
+## What It Includes
 
-## Core Features
+- **Storefront:** Product and category browsing, product details, cart, and checkout flows.
+- **Order handling:** Guest checkout and an admin order dashboard with status updates and search.
+- **Catalog administration:** Create, edit, and remove products and categories. Product variants and image uploads are supported.
+- **Authentication:** Admin login with short-lived access tokens and refresh-token cookies.
+- **API versions:** Product, category, and order routes are available under both `/api/v1` and `/api/v2`.
+- **Request protection:** Rate limiting, role checks on administrative operations, and CORS allowlisting.
 
-The administrative interface currently features a comprehensive category management module (`CategoryManagement_3.jsx`)[cite: 13]. Its primary capabilities include:
+## Stack
 
-* **Category CRUD Operations**: Create, read, update, and delete product categories via a unified form and responsive data table[cite: 13].
-* **Promotional Banner Configuration**: Toggle categories as "Featured" to display hero banners directly on the storefront homepage[cite: 13].
-* **Dynamic Content Mapping**: Custom fields for featured titles, subtitles, and call-to-action button text (defaulting to "Découvrir")[cite: 13].
-* **Media Handling**: Native file input integration for uploading banner images, complete with real-time UI previews[cite: 13].
-* **Error Handling & Feedback**: Integrated loading states, submission lockouts, and visible error messaging to ensure safe data entry[cite: 13].
+| Area | Technologies |
+| --- | --- |
+| Client | React 19, Vite, Tailwind CSS via CDN |
+| Server | Node.js, Express 5 |
+| Database | MongoDB with Mongoose |
+| Media | Multer, Cloudinary, Sharp |
+| Authentication | JSON Web Tokens, bcrypt, HTTP-only cookies |
+| Supporting services | Redis, CORS |
 
-## Technology Stack
+## Run Locally
 
-| Layer | Technology | Application |
-| :--- | :--- | :--- |
-| **Frontend Framework** | React | Component-based UI architecture[cite: 13]. |
-| **State Management** | React Hooks | Utilizes `useState`, `useEffect`, and `useCallback` for data fetching and form control[cite: 13]. |
-| **Styling** | Inline CSS / CSS-in-JS | Responsive, grid-based layouts with standard web-safe typography[cite: 13]. |
-| **API Communication** | `FormData` API | Packages text data and binary image files for multipart/form-data transmission[cite: 13]. |
+### Prerequisites
 
-## Getting Started
+- Node.js and npm
+- A MongoDB connection string
+- Redis and Cloudinary credentials when using the features that depend on them
 
-1. Clone this repository to your local environment.
-2. Run `npm install` to install all required dependencies.
-3. Verify that your backend server (handling the `api.getCategories`, `api.createCategory`, etc. routes) is running[cite: 13].
-4. Execute `npm start` to launch the frontend development server.
+### Install and configure
 
-## References & Useful Links
+```bash
+npm install
+```
 
-* **Live Frontend Interface**: [https://storedz-ui.onrender.com/](https://storedz-ui.onrender.com/)
-* **API Architecture Reference**: [https://roadmap.sh/projects/ecommerce-api](https://roadmap.sh/projects/ecommerce-api)
+Create a `.env` file in the project root. Keep this file private and do not commit real credentials.
+
+```dotenv
+PORT=5500
+DATABASE_URI=mongodb_connection_string
+ACCESS_TOKEN_SECRET=replace_with_a_long_random_secret
+REFRESH_TOKEN_SECRET=replace_with_a_different_long_random_secret
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+REDIS_HOST=your_redis_host
+REDIS_PORT=your_redis_port
+REDIS_PASSWORD=your_redis_password
+```
+
+`PORT` defaults to `5500`. MongoDB and both token secrets are used by the server. Configure the Cloudinary and Redis values for the corresponding media and cache integrations in your environment.
+
+### Start the application
+
+```bash
+npm run dev
+```
+
+This starts the Express API and Vite development server together. The API listens on port `5500` by default, and Vite serves the client on port `5173`.
+
+The client currently uses the deployed API URL in [`src/services/api.js`](src/services/api.js). To use your local server, change `API_BASE_URL` there to:
+
+```js
+const API_BASE_URL = 'http://localhost:5500/api/v2';
+```
+
+The server's CORS allowlist includes the production storefront and `http://localhost:5173`. If you use a different local origin, add it to `config/corsOptions.js`.
+
+## Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the API and client together |
+| `npm run server` | Start the Express API only |
+| `npm run client` | Start the Vite client only |
+| `npm run build` | Build the client into `dist/` |
+
+## API Overview
+
+The API is mounted at `/api/v1` and `/api/v2`. The browser client uses `/api/v2`.
+
+| Method | Endpoint | Access | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/products` | Public | List products |
+| `GET` | `/products/:id` | Public | Get a product |
+| `POST` | `/products` | Admin | Create a standard product |
+| `POST` | `/products/variant` | Admin | Create a product with variants |
+| `PATCH` | `/products/:id` | Admin | Update a product |
+| `DELETE` | `/products/:id` | Admin | Delete a product |
+| `GET` | `/categories` | Public | List categories |
+| `POST` | `/categories` | Admin | Create a category |
+| `PATCH` | `/categories/:categoryId` | Admin | Update a category |
+| `DELETE` | `/categories/:categoryId` | Admin | Delete a category |
+| `POST` | `/orders` or `/orders/guest` | Public | Place a guest order |
+| `GET` | `/orders` | Admin | List and search orders |
+| `PATCH` | `/orders/:id/status` | Admin | Update an order's status |
+| `POST` | `/auth/login` | Public | Sign in as an administrator |
+| `GET` | `/auth/refresh` | Refresh cookie | Issue a new access token |
+| `DELETE` | `/auth/logout` | Authenticated | End the admin session |
+
+Prefix each endpoint with the API version, for example `GET /api/v2/products`. Admin endpoints require a valid access token and the administrator role. Product and category image uploads use `multipart/form-data`; uploaded images must be JPG, PNG, WEBP, or AVIF and are limited to 10 MB per file.
+
+## Project Layout
+
+```text
+E-Commerce-Platform/
+├── config/       # Database, CORS, media, and Redis configuration
+├── Controllers/  # Request handlers, organized by API version
+├── middleware/   # Authentication, roles, validation, uploads, and limits
+├── models/       # Mongoose models
+├── routing/      # Versioned Express route definitions
+├── src/          # React storefront and admin client
+├── Public/       # Static server-served files
+└── server.js     # Express application entry point
+```
+
+## Notes
+
+- The server connects to MongoDB before it begins listening. Check `DATABASE_URI` and database availability if startup appears to stall.
+- API origins are explicitly allowlisted in `config/corsOptions.js`; update that list when deploying the client to a new domain.
+- The project does not currently define a test script in `package.json`.
