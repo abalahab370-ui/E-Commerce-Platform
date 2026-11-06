@@ -53,7 +53,7 @@ export default function Login({ onLoginSuccess }) {
                             onChange={(e) => setUsername(e.target.value)}
                             required
                             placeholder="ex: admin"
-                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' }}
+                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', color: '#0F172A', boxSizing: 'border-box' }}
                         />
                     </div>
 
@@ -67,7 +67,7 @@ export default function Login({ onLoginSuccess }) {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             placeholder="••••••••"
-                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', boxSizing: 'border-box' }}
+                            style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '13px', color: '#0F172A', boxSizing: 'border-box' }}
                         />
                     </div>
 
